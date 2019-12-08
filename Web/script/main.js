@@ -168,20 +168,20 @@ class DeviceTransform{
 		this.beta = beta;
 		this.gamma = gamma;
 
-		this.mat_transform = new mat4(cos(this.alpha) * cos(this.beta), cos(this.alpha) * sin(this.beta) * sin(this.gamma) - sin(this.alpha) * cos(this.gamma), cos(this.alpha) * sin(this.beta) * cos(this.gamma) + sin(this.alpha) * sin(this.gamma), 0,
-							  sin(this.alpha) * cos(this.beta), sin(this.alpha) * sin(this.beta) * sin(this.gamma) + cos(this.alpha) * cos(this.gamma), sin(this.alpha) * sin(this.beta) * cos(this.gamma) - cos(this.alpha) * sin(this.gamma), 0, 
-							  -sin(this.beta), cos(this.beta) * sin(this.gamma), cos(this.beta) * cos(this.gamma), 0, 
-							  0, 0, 0, 1);
+		this.mat_transform = new mat4(cos(this.alpha) * cos(this.gamma), sin(this.gamma) * cos(this.alpha) + sin(this.alpha) * sin(this.beta), sin(this.alpha) * cos(this.beta), 0,
+									  -sin(this.gamma), cos(this.beta) * cos(this.gamma), -sin(this.beta), 0,
+									  sin(this.alpha) * cos(this.gamma), sin(this.beta) * cos(this.alpha) + sin(this.alpha) * sin(this.gamma), cos(this.alpha) * cos(this.beta), 0,
+									  0, 0, 0, 1);
 	}
 
 	getForward(){
-		return this.mat_transform.transform(new vec3(0, 1, 0)).toGLVec();
+		return this.mat_transform.transform(new vec3(0, 0, -1));
 	}
 	getRight(){
-		return this.mat_transform.transform(new vec3(1, 0, 0)).toGLVec();
+		return this.mat_transform.transform(new vec3(1, 0, 0));
 	}
 	getUp(){
-		return this.mat_transform.transform(new vec3(0, 0, 1)).toGLVec();
+		return this.mat_transform.transform(new vec3(0, 1, 0));
 	}
 }
 
@@ -202,6 +202,7 @@ function errorGeo(errorObj){
 }
 function updateOrientation(event){
 	dev_transform.updateOrientation(event.alpha, event.beta, event.gamma);
+	
 }
 
 
