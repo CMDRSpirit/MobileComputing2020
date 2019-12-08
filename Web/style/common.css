@@ -1,0 +1,55 @@
+body{
+	background-color: #000;
+			
+	font-family: sans;
+	color: #AFF;
+}
+.flex_body{
+	display: flex;
+	flex-flow: column;
+	height: 100%;
+}
+
+.horizontalLine{
+	height: 2px;
+	background-color: #AFF;
+}
+
+.HeaderBar{
+	display: grid;
+	text-align: center;
+	height: 64px;
+	grid-gap: 16px;
+	grid-template-columns: auto auto;
+}
+
+.HeaderButton{
+	border-left: 2px solid #AFF0;
+	border-right: 2px solid #AFF0;
+
+		
+	height: 64px;
+	width: 75%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: auto;
+	margin-bottom: auto;
+	line-height: 64px;
+	
+	transition-duration: 0.5s;
+}
+.HeaderButton:hover{
+	border-left: 2px solid #AFF;
+	border-right: 2px solid #AFF;
+}
+.HeaderButton:active{
+	border-left: 2px solid #AFF0;
+	border-right: 2px solid #AFF0;
+	
+	transition-duration: 0.1s;
+}
+
+#gl_win {
+	width: 100%;
+	height: 100%;
+}
