@@ -43,20 +43,9 @@ class DeviceTransform{
 
 	constructor(){
 		this.position = new vec2(0.0, 0.0);
-
-		if (window.DeviceOrientationEvent) {
-			console.log("Device Orientation Sensors active");
-		}
-		else{
-			alert("No Device Orientation Sensors active");
-		}
-
-		if (navigator.geolocation) { 
-			console.log("Device GPS Sensors active");
-		}
-		else{
-			alert("No Device GPS Sensors active");
-		}
+		this.alpha = 0.0;
+		this.beta = 0.0;
+		this.gamma = 0.0;
 	}
 
 	updatePosition(pos){
@@ -91,9 +80,25 @@ function updateOrientation(event){
 	dev_transform.updateOrientation(event.alpha, event.beta, event.gamma);
 }
 
-var geoWatchID = navigator.geolocation.watchPosition(updateDevPosition, errorGeo, {enableHighAccuracy: true, maximumAge: 10000});
 
-window.addEventListener("deviceorientation", updateOrientation, true);
+if (window.DeviceOrientationEvent) {
+	console.log("Device Orientation Sensors active");
+
+	window.addEventListener("deviceorientation", updateOrientation, true);
+}
+else{
+	alert("No Device Orientation Sensors active");
+}
+
+if (navigator.geolocation) { 
+	console.log("Device GPS Sensors active");
+
+	var geoWatchID = navigator.geolocation.watchPosition(updateDevPosition, errorGeo, {enableHighAccuracy: true, maximumAge: 10000});
+}
+else{
+	alert("No Device GPS Sensors active");
+}
+
 //-----------------------------------------
 
 function updateLoop(){
