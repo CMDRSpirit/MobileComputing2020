@@ -170,7 +170,7 @@ class DeviceTransform{
 
 		this.mat_transform = new mat4(cos(this.alpha) * cos(this.gamma), sin(this.gamma) * cos(this.alpha) + sin(this.alpha) * sin(this.beta), sin(this.alpha) * cos(this.beta), 0,
 									  -sin(this.gamma), cos(this.beta) * cos(this.gamma), -sin(this.beta), 0,
-									  sin(this.alpha) * cos(this.gamma), sin(this.beta) * cos(this.alpha) + sin(this.alpha) * sin(this.gamma), cos(this.alpha) * cos(this.beta), 0,
+									  -sin(this.alpha) * cos(this.gamma), sin(this.beta) * cos(this.alpha) - sin(this.alpha) * sin(this.gamma), cos(this.alpha) * cos(this.beta), 0,
 									  0, 0, 0, 1);
 	}
 
