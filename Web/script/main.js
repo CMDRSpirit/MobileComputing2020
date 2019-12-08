@@ -6,6 +6,12 @@ var gl;
 function toRadiant(deg){
 	return Math.PI * 2.0 * deg / 360.0;
 }
+function cos(deg){
+	return Math.cos(toRadiant(deg));
+}
+function sin(deg){
+	return Math.sin(toRadiant(deg));
+}
 
 class TriangleStripModel {
 
@@ -116,6 +122,22 @@ class vec3{
 	mul(vec){
 		return new vec3(this.x * x, this.y * y, this.z * z);
 	}
+
+	toGLVec(){
+		return new vec3(this.x, this.z, -this.y);
+	}
+}
+
+class mat4{
+	data;
+
+	constructor(m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33){
+		this.data = [m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33];
+	}
+
+	transform(vec){
+		return new vec3(this.data[0] * vec.x + this.data[1] * vec.y + this.data[2] * vec.z + this.data[3], this.data[4] * vec.x + this.data[5] * vec.y + this.data[6] * vec.z + this.data[7], this.data[8] * vec.x + this.data[9] * vec.y + this.data[10] * vec.z + this.data[11]);
+	}
 }
 
 class DeviceTransform{
@@ -125,12 +147,15 @@ class DeviceTransform{
 	alpha;
 	beta;
 	gamma;
+	mat_transform;
 
 	constructor(){
 		this.position = new vec2(0.0, 0.0);
 		this.alpha = 0.0;
 		this.beta = 0.0;
 		this.gamma = 0.0;
+		
+		this.updateOrientation(0.0, 0.0, 0.0);
 	}
 
 	updatePosition(pos){
@@ -142,12 +167,22 @@ class DeviceTransform{
 		this.alpha = alpha;
 		this.beta = beta;
 		this.gamma = gamma;
+
+		this.mat_transform = new mat4(cos(this.alpha) * cos(this.beta), cos(this.alpha) * sin(this.beta) * sin(this.gamma) - sin(this.alpha) * cos(this.gamma), cos(this.alpha) * sin(this.beta) * cos(this.gamma) + sin(this.alpha) * sin(this.gamma), 0,
+							  sin(this.alpha) * cos(this.beta), sin(this.alpha) * sin(this.beta) * sin(this.gamma) + cos(this.alpha) * cos(this.gamma), sin(this.alpha) * sin(this.beta) * cos(this.gamma) - cos(this.alpha) * sin(this.gamma), 0, 
+							  -sin(this.beta), cos(this.beta) * sin(this.gamma), cos(this.beta) * cos(this.gamma), 0, 
+							  0, 0, 0, 1);
 	}
 
 	getForward(){
-		return new vec3(-Math.sin(toRadiant(this.alpha)) * Math.cos(toRadiant(this.beta)), Math.cos(toRadiant(this.alpha)) * Math.cos(toRadiant(this.beta)), Math.sin(toRadiant(this.beta)));
+		return this.mat_transform.transform(new vec3(0, 1, 0)).toGLVec();
 	}
-	
+	getRight(){
+		return this.mat_transform.transform(new vec3(1, 0, 0)).toGLVec();
+	}
+	getUp(){
+		return this.mat_transform.transform(new vec3(0, 0, 1)).toGLVec();
+	}
 }
 
 //-------------------------------------------------------------------------------
@@ -192,7 +227,7 @@ else{
 
 function updateLoop(){
 	//update debug text
-	element_debug.innerHTML = "Debug: [lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] [alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"] [F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"]";
+	element_debug.innerHTML = "Debug: [lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] [alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"] [F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] [R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] [U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
 	
 	//rendering
 	main_renderer.onPrepare();
