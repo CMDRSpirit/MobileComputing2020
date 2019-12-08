@@ -149,6 +149,20 @@ class mat4{
 	transform(vec){
 		return new vec3(this.data[0] * vec.x + this.data[1] * vec.y + this.data[2] * vec.z + this.data[3], this.data[4] * vec.x + this.data[5] * vec.y + this.data[6] * vec.z + this.data[7], this.data[8] * vec.x + this.data[9] * vec.y + this.data[10] * vec.z + this.data[11]);
 	}
+
+	set(vec0, vec1, vec2){
+		this.data[0] = vec0.x;
+		this.data[4] = vec0.y;
+		this.data[8] = vec0.z;
+
+		this.data[1] = vec1.x;
+		this.data[5] = vec1.y;
+		this.data[9] = vec1.z;
+
+		this.data[2] = vec2.x;
+		this.data[6] = vec2.y;
+		this.data[10] = vec2.z;
+	}
 }
 
 class DeviceTransform{
@@ -187,16 +201,21 @@ class DeviceTransform{
 									  0.5 * (-cos(alpha + beta) + cos(beta - alpha)), cos(beta), 0.5 * (sin(alpha + beta) + sin(beta - alpha)), 0, 
 									  0.5 * (sin(alpha + beta) - sin(beta - alpha)), -sin(beta), 0.5 * (cos(alpha + beta) + cos(beta - alpha)), 0,
 									  0, 0, 0, 1);
+		var fwd = this.getForward();
+		var right = this.getRight();
+		var up = this.getUp();
+
+		this.mat_transform.set(right, up, fwd);
 	}
 
 	getForward(){
-		return this.mat_transform.transform(new vec3(0, 0, 1));
+		return this.mat_transform.transform(new vec3(0, -1, 0));
 	}
 	getRight(){
 		return this.mat_transform.transform(new vec3(1, 0, 0));
 	}
 	getUp(){
-		return this.mat_transform.transform(new vec3(0, 1, 0));
+		return this.mat_transform.transform(new vec3(0, 0, 1));
 	}
 }
 
