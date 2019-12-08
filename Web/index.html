@@ -27,6 +27,31 @@
 	</div>
 </body>
 
+<!-- Shader definition -->
+<script id="shader_vs" type="notjs">
+attribute vec2 vertex;
+
+uniform mat4 MVP;
+
+varying vec2 texCorods;
+
+void main(){
+	gl_Position = vec4(vertex, 0.0, 1.0);
+
+	texCorods = vertex.xy * 0.5 + 0.5;
+}
+</script>
+<script id="shader_fs" type="notjs">
+precision mediump float;
+
+varying vec2 texCorods;
+
+void main(){
+	gl_FragColor = vec4(texCorods, 0.0, 1.0);
+}
+</script>
+<!--------------------- -->
+
 <script src="./script/main.js"></script>
 
 </html>
