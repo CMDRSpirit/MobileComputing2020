@@ -36,6 +36,10 @@ class vec2{
 class DeviceTransform{
 	
 	position;
+	
+	alpha;
+	beta;
+	gamma;
 
 	constructor(){
 		this.position = new vec2(0.0, 0.0);
@@ -59,6 +63,12 @@ class DeviceTransform{
 		this.position.x = pos.coords.latitude;
 		this.position.y = pos.coords.longitude;
 	}
+
+	updateOrientation(alpha, beta, gamma){
+		this.alpha = alpha;
+		this.beta = beta;
+		this.gamma = gamma;
+	}
 	
 }
 
@@ -77,13 +87,18 @@ function updateDevPosition(pos){
 function errorGeo(errorObj){
 	alert("GPS Error: "+errorObj.message);
 }
+function updateOrientation(event){
+	dev_transform.updateOrientation(event.alpha, event.beta, event.gamma);
+}
 
 var geoWatchID = navigator.geolocation.watchPosition(updateDevPosition, errorGeo, {enableHighAccuracy: true, maximumAge: 10000});
+
+window.addEventListener("deviceorientation", updateOrientation, true);
 //-----------------------------------------
 
 function updateLoop(){
 	//update debug text
-	element_debug.innerHTML = "Debug: [long="+dev_transform.position.x+", lat="+dev_transform.position.y+"]";
+	element_debug.innerHTML = "Debug: [long="+dev_transform.position.x+", lat="+dev_transform.position.y+"] [alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"]";
 	
 	//rendering
 	main_renderer.onPrepare();
