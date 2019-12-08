@@ -175,8 +175,7 @@ class DeviceTransform{
 	}
 
 	getForward(){
-		//return this.mat_transform.transform(new vec3(0, 0, -1));
-		return new vec3(-sin(this.alpha) * cos(this.beta), sin(this.beta), -cos(this.alpha) * cos(this.beta));
+		return this.mat_transform.transform(new vec3(0, 0, -1));
 	}
 	getRight(){
 		return this.mat_transform.transform(new vec3(1, 0, 0));
