@@ -205,11 +205,11 @@ class DeviceTransform{
 									  0.5 * (-cos(alpha + beta) + cos(beta - alpha)), cos(beta), 0.5 * (sin(alpha + beta) + sin(beta - alpha)), 0, 
 									  0.5 * (sin(alpha + beta) - sin(beta - alpha)), -sin(beta), 0.5 * (cos(alpha + beta) + cos(beta - alpha)), 0,
 									  0, 0, 0, 1);
-		var fwd = this.getForward();
-		var right = this.getRight();
-		var up = this.getUp();
+		//var fwd = this.getForward();
+		//var right = this.getRight();
+		//var up = this.getUp();
 
-		this.mat_transform.set(right, fwd, up.scale(-1.0));
+		//this.mat_transform.set(right, fwd, up.scale(-1.0));
 	}
 
 	getForward(){
@@ -239,7 +239,7 @@ function errorGeo(errorObj){
 	alert("GPS Error: "+errorObj.message);
 }
 function updateOrientation(event){
-	dev_transform.updateOrientation(event.alpha, event.beta, event.gamma);
+	dev_transform.updateOrientation(event.alpha, event.beta - 90, event.gamma);
 	
 }
 
