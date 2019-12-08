@@ -35,6 +35,8 @@ class Renderer{
 	shader_program;
 	vertexAttribLocation;
 
+	invVPLoc;
+
 	defaultModel;
 
 	constructor(){
@@ -54,6 +56,8 @@ class Renderer{
 
 		this.shader_program = this.createProgram(vs, fs);
 		this.vertexAttribLocation = gl.getAttribLocation(this.shader_program, "vertex");
+
+		this.invVPLoc = gl.getUniformLocation(this.shader_program, "invVP");
 
 		this.defaultModel = new TriangleStripModel();
 	}
@@ -95,12 +99,15 @@ class Renderer{
 		gl.clear(gl.COLOR_BUFFER_BIT);
 	}
 
-	onRender(){
+	onRender(cam_matrix){
 		gl.useProgram(this.shader_program);
 		gl.enableVertexAttribArray(this.vertexAttribLocation);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.defaultModel.bufferID);
 		gl.vertexAttribPointer(this.vertexAttribLocation, 2, gl.FLOAT, false, 0, 0);
+
+		gl.uniformMatrix4fv(this.invVPLoc, false, cam_matrix);
+
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
 
@@ -125,6 +132,10 @@ class vec3{
 
 	toGLVec(){
 		return new vec3(this.x, this.z, -this.y);
+	}
+
+	mix(vec, vx, vy){
+		return new vec3(this.x * vx + vec.x * vy, this.y * vx + vec.y * vy, this.z * vx + vec.z * vy);
 	}
 }
 
@@ -168,14 +179,18 @@ class DeviceTransform{
 		this.beta = beta;
 		this.gamma = gamma;
 
-		this.mat_transform = new mat4(cos(this.alpha) * cos(this.gamma), sin(this.gamma) * cos(this.alpha) + sin(this.alpha) * sin(this.beta), sin(this.alpha) * cos(this.beta), 0,
-									  -sin(this.gamma), cos(this.beta) * cos(this.gamma), -sin(this.beta), 0,
-									  -sin(this.alpha) * cos(this.gamma), sin(this.beta) * cos(this.alpha) - sin(this.alpha) * sin(this.gamma), cos(this.alpha) * cos(this.beta), 0,
+		/*this.mat_transform = new mat4(cos(this.alpha) * cos(this.gamma), sin(this.gamma) * cos(this.alpha) + sin(this.alpha) * sin(this.beta), -sin(this.alpha) * cos(this.beta), 0,
+									  -sin(this.gamma), cos(this.beta) * cos(this.gamma), sin(this.beta), 0,
+									  sin(this.alpha) * cos(this.gamma), -sin(this.beta) * cos(this.alpha) + sin(this.alpha) * sin(this.gamma), cos(this.alpha) * cos(this.beta), 0,
+									  0, 0, 0, 1);*/
+		this.mat_transform = new mat4(cos(alpha), 0, -sin(alpha), 0, 
+									  0.5 * (-cos(alpha + beta) + cos(beta - alpha)), cos(beta), 0.5 * (sin(alpha + beta) + sin(beta - alpha)), 0, 
+									  0.5 * (sin(alpha + beta) - sin(beta - alpha)), -sin(beta), 0.5 * (cos(alpha + beta) + cos(beta - alpha)), 0,
 									  0, 0, 0, 1);
 	}
 
 	getForward(){
-		return this.mat_transform.transform(new vec3(0, 0, -1));
+		return this.mat_transform.transform(new vec3(0, 0, 1));
 	}
 	getRight(){
 		return this.mat_transform.transform(new vec3(1, 0, 0));
@@ -228,11 +243,11 @@ else{
 
 function updateLoop(){
 	//update debug text
-	element_debug.innerHTML = "Debug: [lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] [alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"] [F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] [R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] [U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
+	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
 	
 	//rendering
 	main_renderer.onPrepare();
-	main_renderer.onRender();
+	main_renderer.onRender(dev_transform.mat_transform.data);
 
 	//next frame
 	requestAnimationFrame(updateLoop);
