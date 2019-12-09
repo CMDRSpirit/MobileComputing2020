@@ -36,6 +36,7 @@ class Renderer{
 	vertexAttribLocation;
 
 	invVPLoc;
+	f_arLoc;
 
 	defaultModel;
 
@@ -58,6 +59,7 @@ class Renderer{
 		this.vertexAttribLocation = gl.getAttribLocation(this.shader_program, "vertex");
 
 		this.invVPLoc = gl.getUniformLocation(this.shader_program, "invVP");
+		this.f_arLoc = gl.getUniformLocation(this.shader_program, "f_ar");
 
 		this.defaultModel = new TriangleStripModel();
 	}
@@ -107,6 +109,7 @@ class Renderer{
 		gl.vertexAttribPointer(this.vertexAttribLocation, 2, gl.FLOAT, false, 0, 0);
 
 		gl.uniformMatrix4fv(this.invVPLoc, false, cam_matrix);
+		gl.uniform1f(this.f_arLoc,  gl.canvas.height /  gl.canvas.width);
 
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
