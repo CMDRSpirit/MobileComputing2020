@@ -42,7 +42,7 @@ class Renderer{
 
 	constructor(){
 		canvas = document.querySelector("#gl_win");
-		gl = canvas.getContext("webgl");
+		gl = canvas.getContext("webgl2");
 
 		if (!gl) {
 			alert("Unable to initialize WebGL. Your browser or machine may not support it.");
