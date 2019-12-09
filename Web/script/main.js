@@ -173,9 +173,7 @@ class DeviceTransform{
 	
 	position;
 	
-	alpha;
-	beta;
-	gamma;
+	quaternion;
 	mat_transform;
 
 	constructor(){
@@ -184,7 +182,7 @@ class DeviceTransform{
 		this.beta = 0.0;
 		this.gamma = 0.0;
 		
-		this.updateOrientation(0.0, 0.0, 0.0);
+		this.updateOrientation([0.0, 0.0, 0.0, 0.0]);
 	}
 
 	updatePosition(pos){
@@ -192,19 +190,28 @@ class DeviceTransform{
 		this.position.y = pos.coords.longitude;
 	}
 
-	updateOrientation(alpha, beta, gamma){
-		this.alpha = alpha;
-		this.beta = beta;
-		this.gamma = gamma;
+	updateOrientation(q){
+		this.quaternion = q;
+
+		const x = q[0];
+		const y = q[1];
+		const z = q[2];
+		const w = q[3];
 
 		/*this.mat_transform = new mat4(cos(this.alpha) * cos(this.gamma), sin(this.gamma) * cos(this.alpha) + sin(this.alpha) * sin(this.beta), -sin(this.alpha) * cos(this.beta), 0,
 									  -sin(this.gamma), cos(this.beta) * cos(this.gamma), sin(this.beta), 0,
 									  sin(this.alpha) * cos(this.gamma), -sin(this.beta) * cos(this.alpha) + sin(this.alpha) * sin(this.gamma), cos(this.alpha) * cos(this.beta), 0,
 									  0, 0, 0, 1);*/
-		this.mat_transform = new mat4(cos(alpha), 0, -sin(alpha), 0, 
-									  0.5 * (-cos(alpha + beta) + cos(beta - alpha)), cos(beta), 0.5 * (sin(alpha + beta) + sin(beta - alpha)), 0, 
-									  0.5 * (sin(alpha + beta) - sin(beta - alpha)), -sin(beta), 0.5 * (cos(alpha + beta) + cos(beta - alpha)), 0,
-									  0, 0, 0, 1);
+		//this.mat_transform = new mat4(cos(alpha), 0, -sin(alpha), 0, 
+									 // 0.5 * (-cos(alpha + beta) + cos(beta - alpha)), cos(beta), 0.5 * (sin(alpha + beta) + sin(beta - alpha)), 0, 
+									 // 0.5 * (sin(alpha + beta) - sin(beta - alpha)), -sin(beta), 0.5 * (cos(alpha + beta) + cos(beta - alpha)), 0,
+									 // 0, 0, 0, 1);
+		//Use quaternion
+		this.mat_transform = new mat4(1.0 - 2*y*y - 2*z*z, 2*x*y-2*z*w, 2*x*z+2*w*y, 0,
+									  2*x*y+2*w*z, 1.0-2*x*x-2*z*z, 2*y*z-2*w*x, 0, 
+									  2*x*z-2*w*y, 2*y*z+2*w*x, 1.0-2*x*x-2*y*y, 0,
+									  0, 0, 0, 1.0);
+		
 	}
 
 	getForward(){
@@ -233,27 +240,13 @@ function updateDevPosition(pos){
 function errorGeo(errorObj){
 	alert("GPS Error: "+errorObj.message);
 }
-function updateOrientation(event){
-	dev_transform.updateOrientation(event.alpha, event.beta - 90.0, event.gamma);
-	
-}
 
-
-if (window.DeviceOrientationEvent) {
-	console.log("Device Orientation Sensors active");
-
-	window.addEventListener("deviceorientation", updateOrientation, true);
-}
-else{
-	alert("No Device Orientation Sensors active");
-}
-
-//
+//Orientation quaternion
 const options = { frequency: 60, referenceFrame: 'device' };
 const sensor = new AbsoluteOrientationSensor(options);
 
 sensor.addEventListener('reading', () => {
-	element_debug.innerHTML = ""+sensor.quaternion;
+	dev_transform.updateOrientation(sensor.quaternion);
 });
 sensor.addEventListener('error', error => {
 	if (event.error.name == 'NotReadableError') {
@@ -261,7 +254,7 @@ sensor.addEventListener('error', error => {
 	}
 });
 sensor.start();
-//
+//-----------------------
 
 if (navigator.geolocation) { 
 	console.log("Device GPS Sensors active");
@@ -276,7 +269,7 @@ else{
 
 function updateLoop(){
 	//update debug text
-	//element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
+	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
 	
 	//rendering
 	main_renderer.onPrepare();
