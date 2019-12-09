@@ -92,8 +92,8 @@ class Renderer{
 	}
 
 	onPrepare(){
-		gl.canvas.width = canvas.clientWidth;
-		gl.canvas.height = canvas.clientHeight;
+		gl.canvas.width = canvas.clientWidth / 2;
+		gl.canvas.height = canvas.clientHeight / 2;
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
