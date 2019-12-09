@@ -205,11 +205,6 @@ class DeviceTransform{
 									  0.5 * (-cos(alpha + beta) + cos(beta - alpha)), cos(beta), 0.5 * (sin(alpha + beta) + sin(beta - alpha)), 0, 
 									  0.5 * (sin(alpha + beta) - sin(beta - alpha)), -sin(beta), 0.5 * (cos(alpha + beta) + cos(beta - alpha)), 0,
 									  0, 0, 0, 1);
-		//var fwd = this.getForward();
-		//var right = this.getRight();
-		//var up = this.getUp();
-
-		//this.mat_transform.set(right, fwd, up.scale(-1.0));
 	}
 
 	getForward(){
@@ -239,7 +234,7 @@ function errorGeo(errorObj){
 	alert("GPS Error: "+errorObj.message);
 }
 function updateOrientation(event){
-	dev_transform.updateOrientation(event.alpha, event.beta - 90, event.gamma);
+	dev_transform.updateOrientation(event.alpha, event.beta - 90.0, event.gamma);
 	
 }
 
@@ -252,6 +247,21 @@ if (window.DeviceOrientationEvent) {
 else{
 	alert("No Device Orientation Sensors active");
 }
+
+//
+const options = { frequency: 60, referenceFrame: 'device' };
+const sensor = new AbsoluteOrientationSensor(options);
+
+sensor.addEventListener('reading', () => {
+	element_debug.innerHTML = ""+sensor.quaternion;
+});
+sensor.addEventListener('error', error => {
+	if (event.error.name == 'NotReadableError') {
+		alert("Sensor is not available.");
+	}
+});
+sensor.start();
+//
 
 if (navigator.geolocation) { 
 	console.log("Device GPS Sensors active");
@@ -266,7 +276,7 @@ else{
 
 function updateLoop(){
 	//update debug text
-	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
+	//element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
 	
 	//rendering
 	main_renderer.onPrepare();
