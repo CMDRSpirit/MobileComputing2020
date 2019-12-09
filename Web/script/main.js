@@ -207,21 +207,21 @@ class DeviceTransform{
 									 // 0.5 * (sin(alpha + beta) - sin(beta - alpha)), -sin(beta), 0.5 * (cos(alpha + beta) + cos(beta - alpha)), 0,
 									 // 0, 0, 0, 1);
 		//Use quaternion
-		this.mat_transform = new mat4(1.0 - 2*y*y - 2*z*z, 2*x*y-2*z*w, 2*x*z+2*w*y, 0,
-									  2*x*y+2*w*z, 1.0-2*x*x-2*z*z, 2*y*z-2*w*x, 0, 
-									  2*x*z-2*w*y, 2*y*z+2*w*x, 1.0-2*x*x-2*y*y, 0,
+		this.mat_transform = new mat4(1.0 - 2*y*y - 2*z*z, -(2*x*y+2*w*z), -(2*x*z-2*w*y), 0,
+									  2*x*y-2*z*w, -(1.0-2*x*x-2*z*z), -(2*y*z+2*w*x), 0, 
+									  2*x*z+2*w*y, -(2*y*z-2*w*x), -(1.0-2*x*x-2*y*y), 0,
 									  0, 0, 0, 1.0);
 		
 	}
 
 	getForward(){
-		return this.mat_transform.transform(new vec3(0, 0, -1));
+		return this.mat_transform.transform(new vec3(0, 0, 1));
 	}
 	getRight(){
 		return this.mat_transform.transform(new vec3(1, 0, 0));
 	}
 	getUp(){
-		return this.mat_transform.transform(new vec3(0, -1, 0));
+		return this.mat_transform.transform(new vec3(0, 1, 0));
 	}
 }
 
