@@ -51,10 +51,17 @@ out vec4 fragColor;
 uniform mat4 invVP;
 uniform float f_ar;
 
-#define MAX_SAMPLES 16
+#define MAX_SAMPLES 32
 #define EPSILON 0.01
 
+#define SUN_DIR normalize(vec3(1.0, -1.0, -1.0))
+
 //SDF Intersection functions by iq https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm
+float sdBox( vec3 p, vec3 b )
+{
+  vec3 q = abs(p) - b;
+  return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
+}
 float sdRoundBox( vec3 p, vec3 b, float r )
 {
   vec3 q = abs(p) - b;
@@ -63,7 +70,7 @@ float sdRoundBox( vec3 p, vec3 b, float r )
 //-------------------------
 
 float calcDist(vec3 p){
-	return sdRoundBox(vec3(0.0, -0.5, -1.5) - p, vec3(0.1, 0.1, 0.1), 0.1);
+	return min(sdRoundBox(vec3(0.0, -0.5, -0.5) - p, vec3(0.1, 0.1, 0.1), 0.05), sdBox(vec3(0.0, -1.0, 0.0) - p, vec3(4.0, 0.5, 4.0)));
 }
 
 //Used by iq https://www.shadertoy.com/view/Xds3zN
@@ -77,6 +84,15 @@ vec3 calcNormal(vec3 pos){
     return normalize(n);
 }
 
+vec3 calcLighting(vec3 p){
+	vec3 n = calcNormal(p);
+
+	//Simple lambert diffuse
+	float ndotL = max(dot(n, -SUN_DIR), 0.0);
+
+	return vec3(1.0) * ndotL;
+}
+
 vec3 raymarch(vec3 ro, vec3 rd){
 	vec3 p = ro;
 	float dist = calcDist(p);
@@ -86,7 +102,7 @@ vec3 raymarch(vec3 ro, vec3 rd){
 
 		dist = calcDist(p);
 		if(dist < EPSILON){
-			return calcNormal(p);
+			return calcLighting(p);
 		}
 	}
 
