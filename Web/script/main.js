@@ -215,13 +215,13 @@ class DeviceTransform{
 	}
 
 	getForward(){
-		return this.mat_transform.transform(new vec3(0, 0, 1));
+		return this.mat_transform.transform(new vec3(0, -1, 0));
 	}
 	getRight(){
-		return this.mat_transform.transform(new vec3(1, 0, 0));
+		return this.mat_transform.transform(new vec3(-1, 0, 0));
 	}
 	getUp(){
-		return this.mat_transform.transform(new vec3(0, 1, 0));
+		return this.mat_transform.transform(new vec3(0, 0, -1));
 	}
 }
 
@@ -269,7 +269,7 @@ else{
 
 function updateLoop(){
 	//update debug text
-	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[alpha="+dev_transform.alpha+", beta="+dev_transform.beta+", gamma="+dev_transform.gamma+"] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
+	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
 	
 	//rendering
 	main_renderer.onPrepare();
