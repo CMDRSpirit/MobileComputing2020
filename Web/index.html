@@ -49,7 +49,7 @@ uniform mat4 invVP;
 void main(){
 	vec2 uc = 2.0 * texCoords - 1.0;
 	vec3 ray = (invVP * vec4(normalize(vec3(uc, -1.0)), 1.0)).xyz;
-	//ray = vec3(-ray.x, -ray.z);
+	ray = vec3(-ray.x, -ray.z, -ray.y);
 
 
 	gl_FragColor = vec4(ray, 1.0);
