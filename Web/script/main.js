@@ -192,7 +192,7 @@ class Renderer{
 		gl.enableVertexAttribArray(this.vertexAttribLocation);
 
         gl.uniformMatrix4fv(this.invVPLoc, false, cam_matrix.data);
-        gl.uniformMatrix4fv(this.VMLoc, false, cam_matrix.data);
+        gl.uniformMatrix4fv(this.VMLoc, false, cam_matrix.transpose().data);
         gl.uniformMatrix4fv(this.PMLoc, false, this.projectionMatrix.data);
 
 		gl.uniform1f(this.f_arLoc,  gl.canvas.height /  gl.canvas.width);
