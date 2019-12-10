@@ -138,15 +138,15 @@ class Renderer{
         //this.defaultModel = new TriangleIndexedModel();
         this.defaultModel = TriangleIndexedModel.loadFromHTMLID("model_file_cube");
 
-        this.projectionMatrix = this.createProjectionMatrix(90.0, 0.1, 100.0);
+        this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 100.0);
     }
 
     createProjectionMatrix(fov, near, far) {
         var scale = 1.0 / Math.tan(fov * 0.5 * Math.PI / 180.0);
         var ar = gl.canvas.width / gl.canvas.height;
 
-        return new mat4(scale * ar, 0, 0, 0,
-                        0, scale, 0, 0,
+        return new mat4(scale, 0, 0, 0,
+                        0, scale / ar, 0, 0,
                         0, 0, -far / (far - near), -1,
                         0, 0, -far * near / (far - near), 0);
     }
@@ -185,10 +185,13 @@ class Renderer{
 
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-		gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 100.0);
 	}
 
-	onRender(cam_matrix){
+    onRender(cam_matrix) {
+
 		gl.useProgram(this.shader_program);
 		gl.enableVertexAttribArray(this.vertexAttribLocation);
 
