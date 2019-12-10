@@ -91,7 +91,7 @@ class TriangleIndexedModel {
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBufferID);
 
-        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
+        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_INT, 0);
     }
 
 }
