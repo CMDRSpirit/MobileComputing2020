@@ -30,17 +30,32 @@
 <!-- Shader definition -->
 <script id="shader_vs" type="notjs">#version 300 es
 
-in vec2 vertex;
+    in vec3 vertex;
 
-out vec2 texCoords;
+    out vec2 texCoords;
 
-void main(){
-	gl_Position = vec4(vertex, 0.0, 1.0);
+    uniform mat4 viewMatrix;
+    uniform mat4 projMatrix;
 
-	texCoords = vertex.xy * 0.5 + 0.5;
-}
+    void main(){
+        gl_Position = projMatrix * viewMatrix * vec4(vertex + vec3(0.0, 0.0, -4.0), 1.0);
+
+        texCoords = vertex.xy * 0.5 + 0.5;
+    }
 </script>
 <script id="shader_fs" type="notjs">#version 300 es
+
+    precision highp float;
+
+    in vec2 texCoords;
+
+    out vec4 fragColor;
+
+    void main(){
+	    fragColor = vec4(1.0);
+    }
+</script>
+<script id="shader_fs_rm" type="notjs">#version 300 es
 
 precision highp float;
 
@@ -122,7 +137,26 @@ void main(){
 }
 </script>
 <!--------------------- -->
+<script id="model_file_plane" type="notjs">
+v -0.500000 0.500000 0.00000
+v -0.500000 -0.500000 0.00000
+v 0.500000 -0.500000 0.00000
+v 0.500000 0.500000 0.00000
 
-<script src="./script/main.js"></script>
+f 0 1 2
+f 2 3 0
+</script>
+<script id="model_file_cube" type="notjs">
+    v -1 1 1
+    v -1 -1 1
+    v 1 -1 1
+    v 1 1 1
+
+    f 0 1 2
+    f 2 3 0
+</script>
+
+
+    <script src="./script/main.js"></script>
 
 </html>
