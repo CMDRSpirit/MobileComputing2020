@@ -145,8 +145,8 @@ class Renderer{
         var scale = 1.0 / Math.tan(fov * 0.5 * Math.PI / 180.0);
         var ar = gl.canvas.width / gl.canvas.height;
 
-        return new mat4(scale, 0, 0, 0,
-                        0, scale / ar, 0, 0,
+        return new mat4(scale * ar, 0, 0, 0,
+                        0, scale, 0, 0,
                         0, 0, -far / (far - near), -1,
                         0, 0, -far * near / (far - near), 0);
     }
