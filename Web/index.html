@@ -39,7 +39,7 @@
 
     void main(){
         vec3 v = vertex + vec3(0.0, 0.0, -4.0);
-	    v = vec3(-v.x, -v.z, -v.y);
+	    //v = vec3(-v.x, -v.z, -v.y);
         
         gl_Position = projMatrix * viewMatrix * vec4(v, 1.0);
 

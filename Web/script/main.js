@@ -143,7 +143,7 @@ class Renderer{
 
     createProjectionMatrix(fov, near, far) {
         var scale = 1.0 / Math.tan(fov * 0.5 * Math.PI / 180.0);
-        var ar = gl.canvas.width / gl.canvas.height;
+        var ar = gl.canvas.height / gl.canvas.width;
 
         return new mat4(scale * ar, 0, 0, 0,
                         0, scale, 0, 0,
