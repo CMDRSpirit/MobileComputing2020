@@ -38,8 +38,8 @@
     uniform mat4 projMatrix;
 
     void main(){
-        vec4 viewPos = viewMatrix * vec4(vertex + vec3(2.0, 2.0, -4.0), 1.0);
-        viewPos = vec4(-viewPos.x, -viewPos.z, -viewPos.y, viewPos.w);
+        vec4 viewPos = viewMatrix * vec4(vertex + vec3(0.0, 0.0, -4.0), 1.0);
+        viewPos = vec4(viewPos.x, -viewPos.z, -viewPos.y, viewPos.w);
 
         gl_Position = projMatrix * viewPos;
 
