@@ -26,6 +26,26 @@ class TriangleStripModel {
 	}
 
 }
+class TriangleIndexedModel {
+	
+	vertices = [-1, 1, 0, -1, -1, 0, 1, -1, 0, 1, 1, 0];
+	indices = [0, 1, 2, 2, 3, 0];
+	
+	vertexBufferID;
+	indexBufferID;
+
+	constructor(){
+		this.vertexBufferID = gl.createBuffer();
+		this.indexBufferID = gl.createBuffer();
+		
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBufferID);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+		
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBufferID);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Float32Array(this.indices), gl.STATIC_DRAW);
+	}
+
+}
 
 class Renderer{
 
