@@ -36,21 +36,55 @@ class TriangleStripModel {
 class TriangleIndexedModel {
 	
 	vertices = [-1, 1, 0, -1, -1, 0, 1, -1, 0, 1, 1, 0];
+	uvs = [];
 	indices = [0, 1, 2, 2, 3, 0];
 	
 	vertexBufferID;
+	uvBufferID;
 	indexBufferID;
+
+	tex_id;
 
 	constructor(){
 		this.vertexBufferID = gl.createBuffer();
+		this.uvBufferID = gl.createBuffer();
 		this.indexBufferID = gl.createBuffer();
 
+		this.tex_id = gl.createTexture();
+
         this.updateBufferData();
+
+		this.loadTexture("./res/dirt.png");
     }
+
+	static asyncLoadTex(src, model){
+		var image = new Image();
+		image.src = src;
+		image.addEventListener('load', function() {
+			// Now that the image has loaded make copy it to the texture.
+			gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D, model.tex_id);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
+			gl.generateMipmap(gl.TEXTURE_2D);
+		});
+	}
+
+	loadTexture(src){
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, this.tex_id);
+
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+              new Uint8Array([255, 0, 255, 255]));
+ 
+		TriangleIndexedModel.asyncLoadTex(src, this);
+	}
 
     updateBufferData() {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBufferID);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBufferID);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.uvs), gl.STATIC_DRAW);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBufferID);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(this.indices), gl.STATIC_DRAW);
@@ -64,32 +98,65 @@ class TriangleIndexedModel {
 
         model.vertices = [];
         model.indices = [];
+		model.uvs = [];
 
         for (var i = 0; i < lines.length; ++i) {
-            var args = lines[i].split(" ");
+			var line = lines[i];
+            /*var args = lines[i].split(" ");
             if (args[args.length-4] == "v") {
                 model.vertices.push(parseFloat(args[args.length-3]));
                 model.vertices.push(parseFloat(args[args.length-2]));
                 model.vertices.push(parseFloat(args[args.length-1]));
             }
+			else if (args[args.length-3] == "vt") {
+                model.uvs.push(parseFloat(args[args.length-2]));
+                model.uvs.push(parseFloat(args[args.length-1]));
+            }
             else if (args[args.length-4] == "f") {
                 model.indices.push(parseInt(args[args.length-3].split("/")[0]));
                 model.indices.push(parseInt(args[args.length-2].split("/")[0]));
                 model.indices.push(parseInt(args[args.length-1].split("/")[0]));
-            }
+            }*/
+			if(line.startsWith("Vertex")){
+				var par = line.replace("Vertex(", "").replace(")", "").split(",");
+				model.vertices.push(parseFloat(par[0].split("=")[1]));
+                model.vertices.push(parseFloat(par[1].split("=")[1]));
+                model.vertices.push(parseFloat(par[2].split("=")[1]));
+			}
+			else if(line.startsWith("TexCoord")){
+				var par = line.replace("TexCoord(", "").replace(")", "").split(",");
+				model.uvs.push(parseFloat(par[0].split("=")[1]));
+                model.uvs.push(parseFloat(par[1].split("=")[1]));
+			}
+			else if(line.startsWith("Face")){
+				var par = line.replace(" ", "").replace("Face(", "").replace(")", "").split(",");
+				model.indices.push(parseInt(par[0].split("=")[1]));
+                model.indices.push(parseInt(par[1].split("=")[1]));
+                model.indices.push(parseInt(par[2].split("=")[1]));
+			}
         }
 
-        //alert(model.vertices + " \n" + model.indices);
+        console.log("Verts: "+model.vertices);
+		console.log("UVs: "+model.uvs);
+        console.log("Indices: "+model.indices);
+
+
         model.updateBufferData();
 
         return model;
     }
 
-    render(vertex_attrib_loc) {
+    render(vertex_attrib_loc, uv_attrib_loc) {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBufferID);
         gl.vertexAttribPointer(vertex_attrib_loc, 3, gl.FLOAT, false, 0, 0);
 
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBufferID);
+        gl.vertexAttribPointer(uv_attrib_loc, 2, gl.FLOAT, false, 0, 0);
+
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBufferID);
+
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, this.tex_id);
 
         gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_INT, 0);
     }
@@ -103,6 +170,7 @@ class Renderer{
 
 	shader_program;
 	vertexAttribLocation;
+	uvAttribLocation;
 
 	invVPLoc;
     VMLoc;
@@ -129,6 +197,7 @@ class Renderer{
 
 		this.shader_program = this.createProgram(vs, fs);
 		this.vertexAttribLocation = gl.getAttribLocation(this.shader_program, "vertex");
+		this.uvAttribLocation = gl.getAttribLocation(this.shader_program, "uv");
 
 		this.invVPLoc = gl.getUniformLocation(this.shader_program, "invVP");
         this.VMLoc = gl.getUniformLocation(this.shader_program, "viewMatrix");
@@ -136,7 +205,7 @@ class Renderer{
         this.f_arLoc = gl.getUniformLocation(this.shader_program, "f_ar");
 
         //this.defaultModel = new TriangleIndexedModel();
-        this.defaultModel = TriangleIndexedModel.loadFromHTMLID("model_file_cube");
+        this.defaultModel = TriangleIndexedModel.loadFromHTMLID("model_file_cube_smf");
 
         this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 100.0);
     }
@@ -194,6 +263,7 @@ class Renderer{
 
 		gl.useProgram(this.shader_program);
 		gl.enableVertexAttribArray(this.vertexAttribLocation);
+		gl.enableVertexAttribArray(this.uvAttribLocation);
 
         gl.uniformMatrix4fv(this.invVPLoc, false, cam_matrix.data);
         gl.uniformMatrix4fv(this.VMLoc, false, cam_matrix.transpose().data);
@@ -201,7 +271,11 @@ class Renderer{
 
 		gl.uniform1f(this.f_arLoc,  gl.canvas.height /  gl.canvas.width);
 
-        this.defaultModel.render(this.vertexAttribLocation);
+		gl.enable(gl.DEPTH_TEST);
+
+        this.defaultModel.render(this.vertexAttribLocation, this.uvAttribLocation);
+
+		gl.disable(gl.DEPTH_TEST);
 	}
 
 }

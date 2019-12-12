@@ -31,6 +31,7 @@
 <script id="shader_vs" type="notjs">#version 300 es
 
     in vec3 vertex;
+	in vec2 uv;
 
     out vec2 texCoords;
 
@@ -43,7 +44,7 @@
         
         gl_Position = projMatrix * viewMatrix * vec4(v, 1.0);
 
-        texCoords = vertex.xy * 0.5 + 0.5;
+        texCoords = uv;
     }
 </script>
 <script id="shader_fs" type="notjs">#version 300 es
@@ -54,8 +55,12 @@
 
     out vec4 fragColor;
 
+	uniform sampler2D tex_diffuse;
+
     void main(){
-	    fragColor = vec4(1.0);
+		vec4 color = texture(tex_diffuse, texCoords);
+
+	    fragColor = vec4(color.xyz, 1.0);
     }
 </script>
 <script id="shader_fs_rm" type="notjs">#version 300 es
@@ -177,7 +182,94 @@ f 2 3 0
 
 </script>
 
+<script id="model_file_cube_smf" type="notjs">
+Vertex(x=1.0,y=-1.0,z=1.0)
+TexCoord(x=1.0,y=1.0)
+Normal(x=0.0,y=-1.0,z=0.0)
+Vertex(x=-1.0,y=-1.0,z=1.0)
+TexCoord(x=1.0,y=0.0)
+Normal(x=0.0,y=-1.0,z=0.0)
+Vertex(x=-1.0,y=-1.0,z=-1.0)
+TexCoord(x=0.0,y=0.0)
+Normal(x=0.0,y=-1.0,z=0.0)
+Vertex(x=-1.0,y=1.0,z=-1.0)
+TexCoord(x=1.0,y=1.0)
+Normal(x=0.0,y=1.0,z=0.0)
+Vertex(x=-1.0,y=1.0,z=1.0)
+TexCoord(x=1.0,y=0.0)
+Normal(x=0.0,y=1.0,z=0.0)
+Vertex(x=0.999999,y=1.0,z=1.000001)
+TexCoord(x=0.0,y=0.0)
+Normal(x=0.0,y=1.0,z=0.0)
+Vertex(x=1.0,y=1.0,z=-0.999999)
+TexCoord(x=1.0,y=1.0)
+Normal(x=1.0,y=0.0,z=0.0)
+Vertex(x=0.999999,y=1.0,z=1.000001)
+TexCoord(x=1.0,y=0.0)
+Normal(x=1.0,y=0.0,z=0.0)
+Vertex(x=1.0,y=-1.0,z=1.0)
+TexCoord(x=0.0,y=0.0)
+Normal(x=1.0,y=0.0,z=0.0)
+Vertex(x=0.999999,y=1.0,z=1.000001)
+TexCoord(x=1.0,y=1.0)
+Normal(x=-0.0,y=0.0,z=1.0)
+Vertex(x=-1.0,y=1.0,z=1.0)
+TexCoord(x=1.0,y=0.0)
+Normal(x=-0.0,y=0.0,z=1.0)
+Vertex(x=-1.0,y=-1.0,z=1.0)
+TexCoord(x=0.0,y=0.0)
+Normal(x=-0.0,y=0.0,z=1.0)
+Vertex(x=-1.0,y=-1.0,z=1.0)
+TexCoord(x=0.0,y=1.0)
+Normal(x=-1.0,y=-0.0,z=-0.0)
+Vertex(x=-1.0,y=1.0,z=1.0)
+TexCoord(x=1.0,y=1.0)
+Normal(x=-1.0,y=-0.0,z=-0.0)
+Vertex(x=-1.0,y=1.0,z=-1.0)
+TexCoord(x=1.0,y=0.0)
+Normal(x=-1.0,y=-0.0,z=-0.0)
+Vertex(x=1.0,y=-1.0,z=-1.0)
+TexCoord(x=1.0,y=1.0)
+Normal(x=0.0,y=0.0,z=-1.0)
+Vertex(x=-1.0,y=-1.0,z=-1.0)
+TexCoord(x=1.0,y=0.0)
+Normal(x=0.0,y=0.0,z=-1.0)
+Vertex(x=-1.0,y=1.0,z=-1.0)
+TexCoord(x=0.0,y=0.0)
+Normal(x=0.0,y=0.0,z=-1.0)
+Vertex(x=1.0,y=-1.0,z=-1.0)
+TexCoord(x=0.0,y=1.0)
+Normal(x=0.0,y=-1.0,z=0.0)
+Vertex(x=1.0,y=1.0,z=-0.999999)
+TexCoord(x=0.0,y=1.0)
+Normal(x=0.0,y=1.0,z=0.0)
+Vertex(x=1.0,y=-1.0,z=-1.0)
+TexCoord(x=0.0,y=1.0)
+Normal(x=1.0,y=0.0,z=0.0)
+Vertex(x=1.0,y=-1.0,z=1.0)
+TexCoord(x=0.0,y=1.0)
+Normal(x=-0.0,y=0.0,z=1.0)
+Vertex(x=-1.0,y=-1.0,z=-1.0)
+TexCoord(x=0.0,y=0.0)
+Normal(x=-1.0,y=-0.0,z=-0.0)
+Vertex(x=1.0,y=1.0,z=-0.999999)
+TexCoord(x=0.0,y=1.0)
+Normal(x=0.0,y=0.0,z=-1.0)
+Face(pos0=0, pos1=1, pos2=2)
+Face(pos0=3, pos1=4, pos2=5)
+Face(pos0=6, pos1=7, pos2=8)
+Face(pos0=9, pos1=10, pos2=11)
+Face(pos0=12, pos1=13, pos2=14)
+Face(pos0=15, pos1=16, pos2=17)
+Face(pos0=18, pos1=0, pos2=2)
+Face(pos0=19, pos1=3, pos2=5)
+Face(pos0=20, pos1=6, pos2=8)
+Face(pos0=21, pos1=9, pos2=11)
+Face(pos0=22, pos1=12, pos2=14)
+Face(pos0=23, pos1=15, pos2=17)
+</script>
 
-    <script src="./script/main.js"></script>
+
+<script src="./script/main.js"></script>
 
 </html>
