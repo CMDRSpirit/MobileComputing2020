@@ -53,8 +53,6 @@ class TriangleIndexedModel {
 		this.tex_id = gl.createTexture();
 
         this.updateBufferData();
-
-		this.loadTexture("./res/world.png");
     }
 
 	static asyncLoadTex(src, model){
@@ -206,6 +204,7 @@ class Renderer{
 
         //this.defaultModel = new TriangleIndexedModel();
         this.defaultModel = TriangleIndexedModel.loadFromHTMLID("world_smf");
+		this.defaultModel.loadTexture("./res/world_denoised.jpg");
 
         this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 100.0);
     }
