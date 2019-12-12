@@ -54,7 +54,7 @@ class TriangleIndexedModel {
 
         this.updateBufferData();
 
-		this.loadTexture("./res/dirt.png");
+		this.loadTexture("./res/world.png");
     }
 
 	static asyncLoadTex(src, model){
@@ -205,7 +205,7 @@ class Renderer{
         this.f_arLoc = gl.getUniformLocation(this.shader_program, "f_ar");
 
         //this.defaultModel = new TriangleIndexedModel();
-        this.defaultModel = TriangleIndexedModel.loadFromHTMLID("model_file_cube_smf");
+        this.defaultModel = TriangleIndexedModel.loadFromHTMLID("world_smf");
 
         this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 100.0);
     }
