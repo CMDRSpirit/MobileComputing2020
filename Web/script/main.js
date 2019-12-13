@@ -440,14 +440,14 @@ else{
 //------------ Touch Controls -------------
 var touchPositionCache;
 
-src.addEventListener('touchstart', function(e) {
+canvas.addEventListener('touchstart', function(e) {
 	  var clientX = e.touches[0].clientX;
 	  var clientY = e.touches[0].clientY;
 
 	  touchPositionCache = new vec3(clientX, clientY, 0);
 }, false);
 
-src.addEventListener('touchend', function(e) {
+canvas.addEventListener('touchend', function(e) {
 	var deltaX = e.changedTouches[0].clientX - touchPositionCache.x;
 	var deltaY = e.changedTouches[0].clientY - touchPositionCache.y;
 
