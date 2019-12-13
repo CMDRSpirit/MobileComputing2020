@@ -307,6 +307,10 @@ class vec3{
 	mix(vec, vx, vy){
 		return new vec3(this.x * vx + vec.x * vy, this.y * vx + vec.y * vy, this.z * vx + vec.z * vy);
 	}
+
+	add(vec){
+		return mix(vec, 1, 1);
+	}
 }
 
 class mat4{
@@ -350,7 +354,7 @@ class DeviceTransform{
 	mat_transform;
 
 	constructor(){
-		this.position = new vec2(0.0, 0.0);
+		this.position = new vec3(0.0, 0.0, 0.0);
 		this.alpha = 0.0;
 		this.beta = 0.0;
 		this.gamma = 0.0;
@@ -359,8 +363,8 @@ class DeviceTransform{
 	}
 
 	updatePosition(pos){
-		this.position.x = pos.coords.latitude;
-		this.position.y = pos.coords.longitude;
+		//this.position.x = pos.coords.latitude;
+		//this.position.z = pos.coords.longitude;
 	}
 
 	updateOrientation(q){
@@ -382,6 +386,12 @@ class DeviceTransform{
 									  -(2*x*z+2*w*y), (1.0-2*x*x-2*y*y), (2*y*z-2*w*x), 0,
 									  0, 0, 0, 1.0);
 		
+	}
+
+	preRenderUpdate(){
+		this.mat_transform.data[3] = -this.position.x;
+		this.mat_transform.data[7] = -this.position.y;
+		this.mat_transform.data[11] = -this.position.z;
 	}
 
 	getForward(){
@@ -447,11 +457,13 @@ canvas.addEventListener('touchstart', function(e) {
 	  touchPositionCache = new vec3(clientX, clientY, 0);
 }, false);
 
-canvas.addEventListener('touchend', function(e) {
-	var deltaX = e.changedTouches[0].clientX - touchPositionCache.x;
-	var deltaY = e.changedTouches[0].clientY - touchPositionCache.y;
+canvas.addEventListener('touchmove', function(e) {
+	var clientX = e.changedTouches[0].clientX;
+	var clientY = e.changedTouches[0].clientY;
 
-	alert(deltaX + " " + deltaY)
+	dev_transform.position.add(dev_transform.getForward().scale(-(clientY - touchPositionCache.y) * 0.01));
+
+	touchPositionCache = new vec3(clientX, clientY, 0);
 
 }, false);
 
@@ -464,6 +476,8 @@ function updateLoop(){
 	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[q="+ dev_transform.quaternion + "] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
 	
 	//rendering
+	dev_transform.preRenderUpdate();
+
 	main_renderer.onPrepare();
 	main_renderer.onRender(dev_transform.mat_transform);
 
