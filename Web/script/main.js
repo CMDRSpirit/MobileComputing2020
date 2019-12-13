@@ -309,7 +309,7 @@ class vec3{
 	}
 
 	add(vec){
-		return mix(vec, 1, 1);
+		return this.mix(vec, 1, 1);
 	}
 }
 
@@ -463,7 +463,7 @@ canvas.addEventListener('touchmove', function(e) {
 
 	dev_transform.position = dev_transform.position.add(dev_transform.getForward().scale(-(clientY - touchPositionCache.y) * 0.01));
 
-	alert(dev_transform.position+" "+ clientY+" "+ touchPositionCache.y);
+	//alert(dev_transform.position+" "+ clientY+" "+ touchPositionCache.y);
 
 	touchPositionCache = new vec3(clientX, clientY, 0);
 
