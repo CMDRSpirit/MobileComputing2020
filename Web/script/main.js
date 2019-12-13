@@ -461,7 +461,7 @@ canvas.addEventListener('touchmove', function(e) {
 	var clientX = e.changedTouches[0].clientX;
 	var clientY = e.changedTouches[0].clientY;
 
-	dev_transform.position.add(dev_transform.getForward().scale(-(clientY - touchPositionCache.y) * 0.01));
+	dev_transform.position = dev_transform.position.add(dev_transform.getForward().scale(-(clientY - touchPositionCache.y) * 0.01));
 
 	touchPositionCache = new vec3(clientX, clientY, 0);
 
@@ -473,7 +473,7 @@ canvas.addEventListener('touchmove', function(e) {
 
 function updateLoop(){
 	//update debug text
-	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[q="+ dev_transform.quaternion + "] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
+	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.z+"] <br>[q="+ dev_transform.quaternion + "] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
 	
 	//rendering
 	dev_transform.preRenderUpdate();
