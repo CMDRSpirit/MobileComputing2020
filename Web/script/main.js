@@ -437,6 +437,28 @@ else{
 
 //-----------------------------------------
 
+//------------ Touch Controls -------------
+var touchPositionCache;
+
+src.addEventListener('touchstart', function(e) {
+	  var clientX = e.touches[0].clientX;
+	  var clientY = e.touches[0].clientY;
+
+	  touchPositionCache = new vec3(clientX, clientY, 0);
+}, false);
+
+src.addEventListener('touchend', function(e) {
+	var deltaX = e.changedTouches[0].clientX - touchPositionCache.x;
+	var deltaY = e.changedTouches[0].clientY - touchPositionCache.y;
+
+	alert(deltaX + " " + deltaY)
+
+}, false);
+
+//-----------------------------------------
+
+
+
 function updateLoop(){
 	//update debug text
 	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.y+"] <br>[q="+ dev_transform.quaternion + "] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
