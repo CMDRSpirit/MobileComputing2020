@@ -172,6 +172,7 @@ class Renderer{
 
 	invVPLoc;
     VMLoc;
+	camPosLoc;
     PMLoc;
     f_arLoc;
 
@@ -201,6 +202,7 @@ class Renderer{
         this.VMLoc = gl.getUniformLocation(this.shader_program, "viewMatrix");
         this.PMLoc = gl.getUniformLocation(this.shader_program, "projMatrix");
         this.f_arLoc = gl.getUniformLocation(this.shader_program, "f_ar");
+		this.camPosLoc = gl.getUniformLocation(this.shader_program, "v_cam_pos");
 
         //this.defaultModel = new TriangleIndexedModel();
         this.defaultModel = TriangleIndexedModel.loadFromHTMLID("world_smf");
@@ -258,7 +260,7 @@ class Renderer{
         this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 100.0);
 	}
 
-    onRender(cam_matrix) {
+    onRender(cam_matrix, cam_pos) {
 
 		gl.useProgram(this.shader_program);
 		gl.enableVertexAttribArray(this.vertexAttribLocation);
@@ -267,6 +269,8 @@ class Renderer{
         gl.uniformMatrix4fv(this.invVPLoc, false, cam_matrix.data);
         gl.uniformMatrix4fv(this.VMLoc, false, cam_matrix.transpose().data);
         gl.uniformMatrix4fv(this.PMLoc, false, this.projectionMatrix.data);
+		gl.uniform3f(this.camPosLoc, cam_pos.x, cam_pos.y, cam_pos.z);
+
 
 		gl.uniform1f(this.f_arLoc,  gl.canvas.height /  gl.canvas.width);
 
@@ -354,7 +358,7 @@ class DeviceTransform{
 	mat_transform;
 
 	constructor(){
-		this.position = new vec3(0.0, 0.0, 0.0);
+		this.position = new vec3(0.0, 1.5, 0.0);
 		this.alpha = 0.0;
 		this.beta = 0.0;
 		this.gamma = 0.0;
@@ -386,12 +390,6 @@ class DeviceTransform{
 									  -(2*x*z+2*w*y), (1.0-2*x*x-2*y*y), (2*y*z-2*w*x), 0,
 									  0, 0, 0, 1.0);
 		
-	}
-
-	preRenderUpdate(){
-		this.mat_transform.data[3] = this.position.x;
-		this.mat_transform.data[7] = this.position.y;
-		this.mat_transform.data[11] = this.position.z;
 	}
 
 	getForward(){
@@ -478,10 +476,8 @@ function updateLoop(){
 	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.z+"] <br>[q="+ dev_transform.quaternion + "] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
 	
 	//rendering
-	dev_transform.preRenderUpdate();
-
 	main_renderer.onPrepare();
-	main_renderer.onRender(dev_transform.mat_transform);
+	main_renderer.onRender(dev_transform.mat_transform, dev_transform.position);
 
 	//next frame
 	requestAnimationFrame(updateLoop);
