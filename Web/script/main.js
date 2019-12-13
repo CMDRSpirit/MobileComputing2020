@@ -389,19 +389,19 @@ class DeviceTransform{
 	}
 
 	preRenderUpdate(){
-		this.mat_transform.data[3] = -this.position.x;
-		this.mat_transform.data[7] = -this.position.y;
-		this.mat_transform.data[11] = -this.position.z;
+		this.mat_transform.data[3] = this.position.x;
+		this.mat_transform.data[7] = this.position.y;
+		this.mat_transform.data[11] = this.position.z;
 	}
 
 	getForward(){
-		return this.mat_transform.transform(new vec3(0, -1, 0));
+		return this.mat_transform.transform(new vec3(0, 0, 1));
 	}
 	getRight(){
-		return this.mat_transform.transform(new vec3(-1, 0, 0));
+		return this.mat_transform.transform(new vec3(1, 0, 0));
 	}
 	getUp(){
-		return this.mat_transform.transform(new vec3(0, 0, -1));
+		return this.mat_transform.transform(new vec3(0, 1, 0));
 	}
 }
 
@@ -461,7 +461,7 @@ canvas.addEventListener('touchmove', function(e) {
 	var clientX = e.changedTouches[0].clientX;
 	var clientY = e.changedTouches[0].clientY;
 
-	dev_transform.position = dev_transform.position.add(dev_transform.getForward().scale(-(clientY - touchPositionCache.y) * 0.01));
+	dev_transform.position = dev_transform.position.add(dev_transform.getUp().scale(-(clientY - touchPositionCache.y) * 0.01));
 
 	//alert(dev_transform.position+" "+ clientY+" "+ touchPositionCache.y);
 
