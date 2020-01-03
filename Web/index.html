@@ -95,9 +95,9 @@
 	uniform vec3 v_color_mul;
 
     void main(){
-		vec4 color = texture(tex_diffuse, texCoords);
+		float color = texture(tex_diffuse, texCoords).x;
 
-	    fragColor = vec4(color.xyz * v_color_mul, 1.0);
+	    fragColor = vec4(color * v_color_mul, color);
     }
 </script>
 

@@ -354,7 +354,7 @@ class Renderer{
 
 		gl.disable(gl.DEPTH_TEST);
 		gl.enable(gl.BLEND);
-		gl.blendFunc(gl.ONE, gl.ONE);
+		gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
 		//render pois
 		gl.useProgram(this.poi_shader_program);
