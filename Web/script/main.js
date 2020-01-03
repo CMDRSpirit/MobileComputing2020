@@ -393,13 +393,13 @@ class DeviceTransform{
 	}
 
 	getForward(){
-		return this.mat_transform.transform(new vec3(0, 0, -1));
+		return this.mat_transform.transpose().transform(new vec3(0, 0, -1));
 	}
 	getRight(){
-		return this.mat_transform.transform(new vec3(1, 0, 0));
+		return this.mat_transform.transpose().transform(new vec3(1, 0, 0));
 	}
 	getUp(){
-		return this.mat_transform.transform(new vec3(0, 1, 0));
+		return this.mat_transform.transpose().transform(new vec3(0, 1, 0));
 	}
 }
 
