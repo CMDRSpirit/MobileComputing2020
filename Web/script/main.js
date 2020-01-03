@@ -21,6 +21,7 @@ class TriangleStripModel {
 	tex_id;
 
 	positions;
+	available;
 
 	constructor(){
 		this.bufferID = gl.createBuffer();
@@ -60,6 +61,7 @@ class TriangleStripModel {
         var lines = s_src.split("\n");
 
         model.positions = [];
+		model.available = [];
 
         for (var i = 0; i < lines.length; ++i) {
 			var line = lines[i];
@@ -67,6 +69,7 @@ class TriangleStripModel {
 				var par = line.replace("Vertex(", "").replace(")", "").split(",");
 
 				model.positions.push(new vec3(parseFloat(par[0].split("=")[1]), parseFloat(par[1].split("=")[1]), parseFloat(par[2].split("=")[1])));
+				model.available.push(Math.random() > 0.5);
 			}
         }
 
@@ -80,6 +83,9 @@ class TriangleStripModel {
 			var pos = this.positions[i];
 
 			gl.uniform3f(gl.getUniformLocation(shader_program, "v_position"), pos.x, pos.y, pos.z);
+
+			var c = this.available[i] ? new vec3(0.1, 1.0, 0.1) : new vec3(1.0, 0.1, 0.1);
+			gl.uniform3f(gl.getUniformLocation(shader_program, "v_color_mul"), c.x, c.y, c.z);
 
 			gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferID);
 			gl.vertexAttribPointer(vertex_attrib_loc, 2, gl.FLOAT, false, 0, 0);
@@ -255,7 +261,7 @@ class Renderer{
 		var fs = this.createShader(gl.FRAGMENT_SHADER, fssrc);
 
 		this.shader_program = this.createProgram(vs, fs);
-		this.poi_shader_program = this.createProgram(this.createShader(gl.VERTEX_SHADER, document.getElementById("shader_vs_poi").text), fs);
+		this.poi_shader_program = this.createProgram(this.createShader(gl.VERTEX_SHADER, document.getElementById("shader_vs_poi").text), this.createShader(gl.FRAGMENT_SHADER, document.getElementById("shader_fs_poi").text));
 
 		this.vertexAttribLocation = gl.getAttribLocation(this.shader_program, "vertex");
 		this.uvAttribLocation = gl.getAttribLocation(this.shader_program, "uv");
