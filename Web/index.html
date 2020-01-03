@@ -63,6 +63,23 @@
 	    fragColor = vec4(color.xyz, 1.0);
     }
 </script>
+<script id="shader_vs_poi" type="notjs">#version 300 es
+
+    in vec2 vertex;
+
+    out vec2 texCoords;
+
+    uniform mat4 viewMatrix;
+    uniform mat4 projMatrix;
+	uniform vec3 v_cam_pos;
+
+    void main(){        
+        gl_Position = vec4(vertex, 0.0, 1.0);
+
+        texCoords = vertex*0.5+0.5;
+    }
+</script>
+
 <script id="shader_fs_rm" type="notjs">#version 300 es
 
 precision highp float;

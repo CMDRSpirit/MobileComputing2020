@@ -18,16 +18,45 @@ class TriangleStripModel {
 	vertices = [-1, -1, 1, -1, -1, 1, 1, 1];
 	bufferID;
 
+	tex_id;
+
 	constructor(){
 		this.bufferID = gl.createBuffer();
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferID);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+
+		this.tex_id = gl.createTexture();
+	}
+
+	static asyncLoadTex(src, model){
+		var image = new Image();
+		image.src = src;
+		image.addEventListener('load', function() {
+			// Now that the image has loaded make copy it to the texture.
+			gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D, model.tex_id);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
+			gl.generateMipmap(gl.TEXTURE_2D);
+		});
+	}
+
+	loadTexture(src){
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, this.tex_id);
+
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+              new Uint8Array([255, 0, 255, 255]));
+ 
+		TriangleStripModel.asyncLoadTex(src, this);
 	}
 
     render(vertex_attrib_loc) {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferID);
         gl.vertexAttribPointer(vertex_attrib_loc, 2, gl.FLOAT, false, 0, 0);
+
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, this.tex_id);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
@@ -167,8 +196,7 @@ class Renderer{
 	mat_view;
 
 	shader_program;
-	vertexAttribLocation;
-	uvAttribLocation;
+	poi_shader_program;
 
 	invVPLoc;
     VMLoc;
@@ -177,7 +205,9 @@ class Renderer{
     f_arLoc;
 
     defaultModel;
-    projectionMatrix;
+	poiModel;
+	 
+	projectionMatrix;
 
 	constructor(){
 		canvas = document.querySelector("#gl_win");
@@ -195,6 +225,8 @@ class Renderer{
 		var fs = this.createShader(gl.FRAGMENT_SHADER, fssrc);
 
 		this.shader_program = this.createProgram(vs, fs);
+		this.poi_shader_program = this.createProgram(this.createShader(gl.VERTEX_SHADER, document.getElementById("shader_vs_poi").text), fs);
+
 		this.vertexAttribLocation = gl.getAttribLocation(this.shader_program, "vertex");
 		this.uvAttribLocation = gl.getAttribLocation(this.shader_program, "uv");
 
@@ -208,7 +240,11 @@ class Renderer{
         this.defaultModel = TriangleIndexedModel.loadFromHTMLID("world_smf");
 		this.defaultModel.loadTexture("./res/world_denoised.jpg");
 
-        this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 100.0);
+		this.poiModel = new TriangleStripModel();
+		this.poiModel.loadTexture("./res/poi.png");
+
+
+        this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 1000.0);
     }
 
     createProjectionMatrix(fov, near, far) {
@@ -263,8 +299,8 @@ class Renderer{
     onRender(cam_matrix, cam_pos) {
 
 		gl.useProgram(this.shader_program);
-		gl.enableVertexAttribArray(this.vertexAttribLocation);
-		gl.enableVertexAttribArray(this.uvAttribLocation);
+		gl.enableVertexAttribArray(0);
+		gl.enableVertexAttribArray(1);
 
         gl.uniformMatrix4fv(this.invVPLoc, false, cam_matrix.data);
         gl.uniformMatrix4fv(this.VMLoc, false, cam_matrix.transpose().data);
@@ -276,7 +312,13 @@ class Renderer{
 
 		gl.enable(gl.DEPTH_TEST);
 
-        this.defaultModel.render(this.vertexAttribLocation, this.uvAttribLocation);
+        this.defaultModel.render(0, 1);
+
+		gl.disableVertexAttribArray(1);
+
+		gl.useProgram(this.poi_shader_program);
+		gl.enableVertexAttribArray(0);
+		//this.poiModel.render(0);
 
 		gl.disable(gl.DEPTH_TEST);
 	}
