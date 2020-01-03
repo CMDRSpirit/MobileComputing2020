@@ -76,9 +76,9 @@
 	uniform vec3 v_position;
 
     void main(){  
-		vec3 v = vec3(vertex, 0.0) - v_cam_pos + v_position;
+		vec3 v = -v_cam_pos + v_position;
 
-        gl_Position = projMatrix * viewMatrix * vec4(v, 1.0);
+        gl_Position = projMatrix * (viewMatrix * vec4(v, 1.0) + vec4(vertex, 0.0, 0.0));
 
         texCoords = vertex*0.5+0.5;
     }

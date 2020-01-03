@@ -76,7 +76,7 @@ class TriangleStripModel {
     }
 
     render(vertex_attrib_loc, shader_program) {
-		gl.uniform3f(gl.getUniformLocation(shader_program, "v_position"), 0, 4, -5);
+		gl.uniform3f(gl.getUniformLocation(shader_program, "v_position"), 6, 4, -5);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferID);
         gl.vertexAttribPointer(vertex_attrib_loc, 2, gl.FLOAT, false, 0, 0);
