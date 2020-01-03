@@ -20,6 +20,8 @@ class TriangleStripModel {
 
 	tex_id;
 
+	positions;
+
 	constructor(){
 		this.bufferID = gl.createBuffer();
 
@@ -51,7 +53,31 @@ class TriangleStripModel {
 		TriangleStripModel.asyncLoadTex(src, this);
 	}
 
-    render(vertex_attrib_loc) {
+	static loadFromHTMLID(id) {
+        var model = new TriangleStripModel();
+
+        var s_src = document.getElementById(id).text;
+        var lines = s_src.split("\n");
+
+        model.positions = [];
+
+        for (var i = 0; i < lines.length; ++i) {
+			var line = lines[i];
+			if(line.startsWith("Vertex")){
+				var par = line.replace("Vertex(", "").replace(")", "").split(",");
+
+				model.positions.push(new vec3(parseFloat(par[0].split("=")[1]), parseFloat(par[1].split("=")[1]), parseFloat(par[2].split("=")[1])));
+			}
+        }
+
+        console.log("Positions: "+model.positions);
+
+        return model;
+    }
+
+    render(vertex_attrib_loc, shader_program) {
+		gl.uniform3f(gl.getUniformLocation(shader_program, "v_position"), 0, 4, -5);
+
         gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferID);
         gl.vertexAttribPointer(vertex_attrib_loc, 2, gl.FLOAT, false, 0, 0);
 
@@ -240,7 +266,7 @@ class Renderer{
         this.defaultModel = TriangleIndexedModel.loadFromHTMLID("world_smf");
 		this.defaultModel.loadTexture("./res/world_denoised.jpg");
 
-		this.poiModel = new TriangleStripModel();
+		this.poiModel = TriangleStripModel.loadFromHTMLID("world_poi");
 		this.poiModel.loadTexture("./res/poi.png");
 
 
@@ -316,11 +342,19 @@ class Renderer{
 
 		gl.disableVertexAttribArray(1);
 
+		gl.disable(gl.DEPTH_TEST);
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.ONE, gl.ONE);
+
+		//render pois
 		gl.useProgram(this.poi_shader_program);
 		gl.enableVertexAttribArray(0);
-		//this.poiModel.render(0);
 
-		gl.disable(gl.DEPTH_TEST);
+		gl.uniformMatrix4fv(gl.getUniformLocation(this.poi_shader_program, "viewMatrix"), false, cam_matrix.transpose().data);
+        gl.uniformMatrix4fv(gl.getUniformLocation(this.poi_shader_program, "projMatrix"), false, this.projectionMatrix.data);
+		gl.uniform3f(gl.getUniformLocation(this.poi_shader_program, "v_cam_pos"), cam_pos.x, cam_pos.y, cam_pos.z);
+
+		this.poiModel.render(0, this.poi_shader_program);
 	}
 
 }
