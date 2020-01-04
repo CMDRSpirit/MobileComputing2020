@@ -39,7 +39,6 @@ function raySphereIntersect(ro, rd, ce, ra){
 	return new vec3(-b-h, -b+h);
 }
 
-
 class TriangleStripModel {
 
 	vertices = [-1, -1, 1, -1, -1, 1, 1, 1];
@@ -133,7 +132,7 @@ class TriangleStripModel {
 			var radius = 0.5;
 
 			var t = raySphereIntersect(ro, rd, pos, radius);
-			if(t.x < minT){
+			if(t.x > 0.0 && t.x < minT){
 				minT = t.x;
 				id = i;
 			}
