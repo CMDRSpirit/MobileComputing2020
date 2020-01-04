@@ -553,8 +553,8 @@ canvas.addEventListener('touchstart', function(e) {
 	touchPositionCache = new vec3(clientX, clientY, 0);
 }, false);
 canvas.addEventListener('touchend', function(e) {
-	var clientX = e.touches[0].clientX;
-	var clientY = e.touches[0].clientY;
+	var clientX = e.changedTouches[0].clientX;
+	var clientY = e.changedTouches[0].clientY;
 
 	//if( < 8){
 		alert(clientX + " " + clientY + " " + touchPositionCache.x + " " + touchPositionCache.y);
