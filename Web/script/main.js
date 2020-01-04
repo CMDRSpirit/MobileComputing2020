@@ -622,6 +622,8 @@ canvas.addEventListener('touchstart', function(e) {
 	touchPositionCache = new vec3(clientX, clientY, 0);
 	touchStart = touchPositionCache;
 }, false);
+
+/*
 canvas.addEventListener('touchend', function(e) {
 	var clientX = e.changedTouches[0].clientX;
 	var clientY = e.changedTouches[0].clientY;
@@ -639,7 +641,7 @@ canvas.addEventListener('touchend', function(e) {
 		if(id!=-1) main_renderer.poiModel.available[id] = !main_renderer.poiModel.available[id];
 
 	}
-}, false);
+}, false);*/
 
 canvas.addEventListener('touchmove', function(e) {
 	var clientX = e.changedTouches[0].clientX;
