@@ -594,9 +594,9 @@ canvas.addEventListener('touchend', function(e) {
 
 		var invVP = dev_transform.mat_transform.mul(main_renderer.projectionMatrix.invert());
 		
-		var rd = invVP.transform(uc);
+		var rd = invVP.transform(new vec3(uc.x, uc.y, -1.0));
 
-		alert(dev_transform.position+" " + rd.x+" "+rd.y+" "+rd.z);
+		alert(uc.x+" "+uc.y+" " + rd.x+" "+rd.y+" "+rd.z);
 		//main_renderer.poiModel.rayPositionIntersect(dev_transform.position);
 	}
 }, false);
