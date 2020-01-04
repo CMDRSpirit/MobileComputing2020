@@ -636,7 +636,7 @@ canvas.addEventListener('touchend', function(e) {
 		var id = main_renderer.poiModel.rayPositionIntersect(dev_transform.position, rd);
 
 		//alert("[" + rd.x + ", " + rd.y + ", " + rd.z + "] " + id);
-		main_renderer.poiModel.available[id] = !main_renderer.poiModel.available[id];
+		if(id!=-1) main_renderer.poiModel.available[id] = !main_renderer.poiModel.available[id];
 
 	}
 }, false);
