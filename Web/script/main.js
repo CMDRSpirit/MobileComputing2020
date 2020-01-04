@@ -557,7 +557,7 @@ canvas.addEventListener('touchend', function(e) {
 	var clientY = e.touches[0].clientY;
 
 	//if( < 8){
-		alert(Math.abs(clientX - touchPositionCache.x) + Math.abs(clientY - touchPositionCache.y));
+		alert(clientX + " " + clientY + " " + touchPositionCache.x + " " + touchPositionCache.y);
 	//}
 }, false);
 
