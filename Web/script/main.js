@@ -13,6 +13,15 @@ function sin(deg){
 	return Math.sin(toRadiant(deg));
 }
 
+function screenToUC(screenCoord){
+	var cvPos = new vec3(canvas.getBoundingClientRect().left, canvas.getBoundingClientRect().top, 0);
+	var cvSize = new vec3(canvas.clientWidth, canvas.clientHeight, 1);
+
+	var uv = screenCoord.sub(cvPos).div(cvSize);
+
+	return new vec3(uv.x * 2.0 - 1.0, -(uv.y * 2.0 - 1.0));
+}
+
 class TriangleStripModel {
 
 	vertices = [-1, -1, 1, -1, -1, 1, 1, 1];
@@ -395,7 +404,10 @@ class vec3{
 	}
 
 	mul(vec){
-		return new vec3(this.x * x, this.y * y, this.z * z);
+		return new vec3(this.x * vec.x, this.y * vec.y, this.z * vec.z);
+	}
+	div(vec){
+		return new vec3(this.x / vec.x, this.y / vec.y, this.z / vec.z);
 	}
 
 	scale(val){
@@ -412,6 +424,9 @@ class vec3{
 
 	add(vec){
 		return this.mix(vec, 1, 1);
+	}
+	sub(vec){
+		return this.mix(vec, 1, -1);
 	}
 }
 
@@ -446,6 +461,15 @@ class mat4{
                         this.data[2], this.data[6], this.data[10], this.data[14],
                         this.data[3], this.data[7], this.data[11], this.data[15]);
     }
+
+	invert(){
+		var inv = math.inv([[this.data[0], this.data[1], this.data[2], this.data[3]],
+						[this.data[4], this.data[5], this.data[6], this.data[7]],
+						[this.data[8], this.data[9], this.data[10], this.data[11]],
+						[this.data[12], this.data[13], this.data[14], this.data[15]]]);
+
+		return new mat4(inv[0][0], inv[0][1], inv[0][2], inv[0][3], inv[1][0], inv[1][1], inv[1][2], inv[1][3], inv[2][0], inv[2][1], inv[2][2], inv[2][3], inv[3][0], inv[3][1], inv[3][2], inv[3][3]);
+	}
 }
 
 class DeviceTransform{
@@ -559,7 +583,14 @@ canvas.addEventListener('touchend', function(e) {
 	var clientY = e.changedTouches[0].clientY;
 
 	if(Math.abs(clientX - touchStart.x) + Math.abs(clientY - touchStart.y) < 8){
-		alert(clientX + " " + clientY);
+		var uc = screenToUC(touchStart);
+
+		var invVP = dev_transform.mat_transform.mul(main_renderer.projectionMatrix.invert());
+		
+		var rd = invVP.transform(uc);
+
+		alert(dev_transform.position+" " + rd);
+		//main_renderer.poiModel.rayPositionIntersect(dev_transform.position);
 	}
 }, false);
 
