@@ -22,6 +22,24 @@ function screenToUC(screenCoord){
 	return new vec3(uv.x * 2.0 - 1.0, -(uv.y * 2.0 - 1.0));
 }
 
+/**
+GLSL Sphere Intersector by IQ http://www.iquilezles.org/www/articles/intersectors/intersectors.htm
+converted to JS by Pascal Zwick
+**/
+function raySphereIntersect(ro, rd, ce, ra){
+	var oc = ro.sub(ce);
+	var b = oc.dot(rd);
+	var c = oc.dot(oc) - ra * ra;
+	var h = b*b - c;
+	if(h < 0.0){
+		return new vec3(-1, -1, -1);
+	}
+	h = Math.sqrt(h);
+
+	return new vec3(-b-h, -b+h);
+}
+
+
 class TriangleStripModel {
 
 	vertices = [-1, -1, 1, -1, -1, 1, 1, 1];
@@ -106,14 +124,22 @@ class TriangleStripModel {
 		}
     }
 
-	rayPositionIntersect(orig, dir){
+	rayPositionIntersect(ro, rd){
+		var minT = 1000.0;
+		var id = -1;
+
 		for(var i=0;i<this.positions.length;++i){
 			var pos = this.positions[i];
+			var radius = 0.5;
 
-
+			var t = raySphereIntersect(ro, rd, pos, radius);
+			if(t.x < minT){
+				minT = t.x;
+				id = i;
+			}
 		}
 
-		return -1;
+		return id;
 	}
 
 }
@@ -436,6 +462,10 @@ class vec3{
 		this.y /= l;
 		this.z /= l;
 	}
+
+	dot(vec){
+		return this.x * vec.x + this.y * vec.y + this.z * vec.z;
+	}
 }
 
 class mat4{
@@ -599,15 +629,14 @@ canvas.addEventListener('touchend', function(e) {
 
 	if(Math.abs(clientX - touchStart.x) + Math.abs(clientY - touchStart.y) < 8){
 		var uc = screenToUC(touchStart);
-
-		//var invVP = dev_transform.mat_transform.mul(main_renderer.projectionMatrix.invert());
 		
 		var rd = main_renderer.projectionMatrix.invert().transform(new vec3(uc.x, uc.y, -1.0));
 		rd.normalise();
 		rd = dev_transform.mat_transform.transpose().transform(rd);
 
-		alert(uc.x+" "+uc.y+" " + rd.x+" "+rd.y+" "+rd.z);
-		//main_renderer.poiModel.rayPositionIntersect(dev_transform.position);
+		var id = main_renderer.poiModel.rayPositionIntersect(dev_transform.position, rd);
+
+		alert(id);
 	}
 }, false);
 
