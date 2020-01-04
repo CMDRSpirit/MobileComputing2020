@@ -470,6 +470,13 @@ class mat4{
 
 		return new mat4(inv[0][0], inv[0][1], inv[0][2], inv[0][3], inv[1][0], inv[1][1], inv[1][2], inv[1][3], inv[2][0], inv[2][1], inv[2][2], inv[2][3], inv[3][0], inv[3][1], inv[3][2], inv[3][3]);
 	}
+
+	mul(mat){
+		return new mat4(this.data[0] * mat.data[0] + this.data[1] * mat.data[4] + this.data[2] * mat.data[8] + this.data[3] * mat.data[12], this.data[0] * mat.data[1] + this.data[1] * mat.data[5] + this.data[2] * mat.data[9] + this.data[3] * mat.data[13], this.data[0] * mat.data[2] + this.data[1] * mat.data[6] + this.data[2] * mat.data[10] + this.data[3] * mat.data[14], this.data[0] * mat.data[3] + this.data[1] * mat.data[7] + this.data[2] * mat.data[11] + this.data[3] * mat.data[15],
+						this.data[4] * mat.data[0] + this.data[5] * mat.data[4] + this.data[6] * mat.data[8] + this.data[7] * mat.data[12], this.data[4] * mat.data[1] + this.data[5] * mat.data[5] + this.data[6] * mat.data[9] + this.data[7] * mat.data[13], this.data[4] * mat.data[2] + this.data[5] * mat.data[6] + this.data[6] * mat.data[10] + this.data[7] * mat.data[14], this.data[4] * mat.data[3] + this.data[5] * mat.data[7] + this.data[6] * mat.data[11] + this.data[7] * mat.data[15],
+						this.data[8] * mat.data[0] + this.data[9] * mat.data[4] + this.data[10] * mat.data[8] + this.data[11] * mat.data[12], this.data[8] * mat.data[1] + this.data[9] * mat.data[5] + this.data[10] * mat.data[9] + this.data[11] * mat.data[13], this.data[8] * mat.data[2] + this.data[9] * mat.data[6] + this.data[10] * mat.data[10] + this.data[11] * mat.data[14], this.data[8] * mat.data[3] + this.data[9] * mat.data[7] + this.data[10] * mat.data[11] + this.data[11] * mat.data[15],
+						this.data[12] * mat.data[0] + this.data[13] * mat.data[4] + this.data[14] * mat.data[8] + this.data[15] * mat.data[12], this.data[12] * mat.data[1] + this.data[13] * mat.data[5] + this.data[14] * mat.data[9] + this.data[15] * mat.data[13], this.data[12] * mat.data[2] + this.data[13] * mat.data[6] + this.data[14] * mat.data[10] + this.data[15] * mat.data[14], this.data[12] * mat.data[3] + this.data[13] * mat.data[7] + this.data[14] * mat.data[11] + this.data[15] * mat.data[15]);
+	}
 }
 
 class DeviceTransform{
@@ -589,7 +596,7 @@ canvas.addEventListener('touchend', function(e) {
 		
 		var rd = invVP.transform(uc);
 
-		alert(dev_transform.position+" " + rd);
+		alert(dev_transform.position+" " + rd.x+" "+rd.y+" "+rd.z);
 		//main_renderer.poiModel.rayPositionIntersect(dev_transform.position);
 	}
 }, false);
