@@ -629,9 +629,9 @@ canvas.addEventListener('touchend', function(e) {
 	if(Math.abs(clientX - touchStart.x) + Math.abs(clientY - touchStart.y) < 8){
 		var uc = screenToUC(touchStart);
 		
-		var rd = main_renderer.projectionMatrix.invert().transform(new vec3(uc.x, uc.y, -1.0));
-		rd.normalise();
+		var rd = main_renderer.projectionMatrix.invert().transpose().transform(new vec3(uc.x, uc.y, -1.0));
 		rd = dev_transform.mat_transform.transpose().transform(rd);
+		rd.normalise();
 
 		var id = main_renderer.poiModel.rayPositionIntersect(dev_transform.position, rd);
 
