@@ -97,6 +97,16 @@ class TriangleStripModel {
 		}
     }
 
+	rayPositionIntersect(orig, dir){
+		for(var i=0;i<this.positions.length;++i){
+			var pos = this.positions[i];
+
+
+		}
+
+		return -1;
+	}
+
 }
 class TriangleIndexedModel {
 	
@@ -329,7 +339,7 @@ class Renderer{
 
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 100.0);
+        this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 1000.0);
 	}
 
     onRender(cam_matrix, cam_pos) {
@@ -537,10 +547,18 @@ else{
 var touchPositionCache;
 
 canvas.addEventListener('touchstart', function(e) {
-	  var clientX = e.touches[0].clientX;
-	  var clientY = e.touches[0].clientY;
+	var clientX = e.touches[0].clientX;
+	var clientY = e.touches[0].clientY;
 
-	  touchPositionCache = new vec3(clientX, clientY, 0);
+	touchPositionCache = new vec3(clientX, clientY, 0);
+}, false);
+canvas.addEventListener('touchend', function(e) {
+	var clientX = e.touches[0].clientX;
+	var clientY = e.touches[0].clientY;
+
+	if(Math.abs(clientX - touchPositionCache.x) + Math.abs(clientY - touchPositionCache.y) < 8){
+		alert("Touched");
+	}
 }, false);
 
 canvas.addEventListener('touchmove', function(e) {
