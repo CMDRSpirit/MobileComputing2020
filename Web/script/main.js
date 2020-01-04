@@ -653,6 +653,33 @@ canvas.addEventListener('touchmove', function(e) {
 
 }, false);
 
+canvas.addEventListener('mouseup', function(e) {
+	var clientX = e.clientX;
+	var clientY = e.clientY;
+
+	var uc = screenToUC(new vec3(clientX, clientY, 0.0));
+		
+	var rd = main_renderer.projectionMatrix.invert().transpose().transform(new vec3(uc.x, uc.y, -1.0));
+	rd = dev_transform.mat_transform.transpose().transform(rd);
+	rd.normalise();
+
+	var id = main_renderer.poiModel.rayPositionIntersect(dev_transform.position, rd);
+
+	//alert("[" + rd.x + ", " + rd.y + ", " + rd.z + "] " + id);
+	if(id!=-1){
+		document.getElementById("HeaderBar").style.height = "16%";
+		canvas.style.height = "72%";
+
+		//main_renderer.poiModel.available[id] = !main_renderer.poiModel.available[id];
+	}
+
+}, false);
+
+document.getElementById("btn_close").onclick = function(){
+	document.getElementById("HeaderBar").style.height = "0%";
+	canvas.style.height = "88%";
+}
+
 //-----------------------------------------
 
 

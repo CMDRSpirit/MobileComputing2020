@@ -18,16 +18,18 @@ body{
 .HeaderBar{
 	display: grid;
 	text-align: center;
-	height: 8%;
-	grid-gap: 16px;
+	height: 0%;
+	grid-gap: 0px;
 	grid-template-columns: auto;
+
+	transition-duration: 0.5s;
 }
 
-.HeaderButton{
+.HeaderItem{
 	border-left: 2px solid #AFF0;
 	border-right: 2px solid #AFF0;
-
 		
+	font-size: 24px;
 	height: auto;
 	width: 75%;
 	margin-left: auto;
@@ -35,8 +37,12 @@ body{
 	margin-top: auto;
 	margin-bottom: auto;
 	line-height: auto;
-	
-	transition-duration: 0.5s;
+}
+
+.HeaderButton{
+	border-top: 2px solid #AFF;
+
+	transition-duration: 0.4s;
 }
 .HeaderButton:hover{
 	border-left: 2px solid #AFF;
@@ -52,4 +58,10 @@ body{
 #gl_win {
 	width: 100%;
 	height: 100%;
+
+	transition-duration: 0.5s;
+}
+
+#Debug {
+	height: "12%";
 }
