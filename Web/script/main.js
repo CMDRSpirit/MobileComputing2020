@@ -428,6 +428,14 @@ class vec3{
 	sub(vec){
 		return this.mix(vec, 1, -1);
 	}
+
+	normalise(){
+		var l = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+
+		this.x /= l;
+		this.y /= l;
+		this.z /= l;
+	}
 }
 
 class mat4{
@@ -594,7 +602,8 @@ canvas.addEventListener('touchend', function(e) {
 
 		var invVP = dev_transform.mat_transform.mul(main_renderer.projectionMatrix.invert());
 		
-		var rd = invVP.transform(new vec3(uc.x, uc.y, -1.0));
+		var rd = invVP.transpose().transform(new vec3(uc.x, uc.y, 0.0));
+		rd.normalise();
 
 		alert(uc.x+" "+uc.y+" " + rd.x+" "+rd.y+" "+rd.z);
 		//main_renderer.poiModel.rayPositionIntersect(dev_transform.position);
