@@ -669,8 +669,14 @@ canvas.addEventListener('mouseup', function(e) {
 
 	//alert("[" + rd.x + ", " + rd.y + ", " + rd.z + "] " + id);
 	if(id!=-1){
-		document.getElementById("HeaderBar").style.height = "16%";
-		canvas.style.height = "72%";
+		document.getElementById("HeaderBar").style.height = "24%";
+		canvas.style.height = "64%";
+
+		//
+		document.getElementById("seatID").innerHTML = "Seat Nr: "+id;
+		document.getElementById("seatOccupied").innerHTML = "Occupied: "+ !main_renderer.poiModel.available[id];
+		document.getElementById("seatDesc").innerHTML = "Description: Geb. 50.34";
+		//
 
 		//main_renderer.poiModel.available[id] = !main_renderer.poiModel.available[id];
 	}
