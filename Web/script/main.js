@@ -558,9 +558,9 @@ canvas.addEventListener('touchend', function(e) {
 	var clientX = e.changedTouches[0].clientX;
 	var clientY = e.changedTouches[0].clientY;
 
-	//if( < 8){
-		alert(clientX + " " + clientY + " " + touchStart.x + " " + touchStart.y);
-	//}
+	if(Math.abs(clientX - touchStart.x) + Math.abs(clientY - touchStart.y) < 8){
+		alert(clientX + " " + clientY);
+	}
 }, false);
 
 canvas.addEventListener('touchmove', function(e) {
