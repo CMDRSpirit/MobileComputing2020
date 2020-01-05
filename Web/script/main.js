@@ -1,6 +1,8 @@
-//------- Renderer Variables because i hate the syntax of JS class Variables --------------
+//------- Renderer Variables --------------
 var canvas;
 var gl;
+
+var currentOpenedSeatID = -1;
 //------------------------------------------------------------------------------
 
 function toRadiant(deg){
@@ -110,7 +112,8 @@ class TriangleStripModel {
 
 			gl.uniform3f(gl.getUniformLocation(shader_program, "v_position"), pos.x, pos.y, pos.z);
 
-			var c = this.available[i] ? new vec3(0.1, 1.0, 0.1) : new vec3(1.0, 0.1, 0.1);
+			var c = currentOpenedSeatID == i ? new vec3(0.1,0.8,1.0) : (this.available[i] ? new vec3(0.1, 1.0, 0.1) : new vec3(1.0, 0.1, 0.1));
+
 			gl.uniform3f(gl.getUniformLocation(shader_program, "v_color_mul"), c.x, c.y, c.z);
 
 			gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferID);
@@ -654,8 +657,6 @@ canvas.addEventListener('touchmove', function(e) {
 	touchPositionCache = new vec3(clientX, clientY, 0);
 
 }, false);
-
-var currentOpenedSeatID = -1;
 
 canvas.addEventListener('mouseup', function(e) {
 	var clientX = e.clientX;
