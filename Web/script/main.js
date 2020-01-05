@@ -655,6 +655,8 @@ canvas.addEventListener('touchmove', function(e) {
 
 }, false);
 
+var currentOpenedSeatID = -1;
+
 canvas.addEventListener('mouseup', function(e) {
 	var clientX = e.clientX;
 	var clientY = e.clientY;
@@ -678,6 +680,8 @@ canvas.addEventListener('mouseup', function(e) {
 		document.getElementById("seatDesc").innerHTML = "Description: Geb. 50.34";
 		//
 
+		currentOpenedSeatID = id;
+
 		//main_renderer.poiModel.available[id] = !main_renderer.poiModel.available[id];
 	}
 
@@ -686,6 +690,15 @@ canvas.addEventListener('mouseup', function(e) {
 document.getElementById("btn_close").onclick = function(){
 	document.getElementById("HeaderBar").style.height = "0%";
 	canvas.style.height = "88%";
+
+	currentOpenedSeatID = -1;
+}
+document.getElementById("btn_toggle").onclick = function(){
+	if(currentOpenedSeatID != -1){
+		main_renderer.poiModel.available[currentOpenedSeatID] = !main_renderer.poiModel.available[currentOpenedSeatID];
+
+		document.getElementById("seatOccupied").innerHTML = "Occupied: "+ !main_renderer.poiModel.available[currentOpenedSeatID];
+	}
 }
 
 //-----------------------------------------
