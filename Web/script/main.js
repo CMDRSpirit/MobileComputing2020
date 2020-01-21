@@ -4,6 +4,8 @@ var gl;
 
 var currentOpenedSeatID = -1;
 //------------------------------------------------------------------------------
+var DEGREES_TO_METERS = 111000.0;
+//
 
 function toRadiant(deg){
 	return Math.PI * 2.0 * deg / 360.0;
@@ -292,6 +294,8 @@ class Renderer{
 	 
 	projectionMatrix;
 
+	v_world_center;
+
 	constructor(){
 		canvas = document.querySelector("#gl_win");
 		gl = canvas.getContext("webgl2");
@@ -328,6 +332,8 @@ class Renderer{
 
 
         this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 1000.0);
+
+		this.v_world_center = new vec3(49.1918426 * DEGREES_TO_METERS, 0, 8.1241558 * DEGREES_TO_METERS);
     }
 
     createProjectionMatrix(fov, near, far) {
@@ -388,7 +394,7 @@ class Renderer{
         gl.uniformMatrix4fv(this.invVPLoc, false, cam_matrix.data);
         gl.uniformMatrix4fv(this.VMLoc, false, cam_matrix.transpose().data);
         gl.uniformMatrix4fv(this.PMLoc, false, this.projectionMatrix.data);
-		gl.uniform3f(this.camPosLoc, cam_pos.x, cam_pos.y, cam_pos.z);
+		gl.uniform3f(this.camPosLoc, cam_pos.x - this.v_world_center.x, cam_pos.y - this.v_world_center.y, cam_pos.z - this.v_world_center.z);
 
 
 		gl.uniform1f(this.f_arLoc,  gl.canvas.height /  gl.canvas.width);
@@ -409,7 +415,7 @@ class Renderer{
 
 		gl.uniformMatrix4fv(gl.getUniformLocation(this.poi_shader_program, "viewMatrix"), false, cam_matrix.transpose().data);
         gl.uniformMatrix4fv(gl.getUniformLocation(this.poi_shader_program, "projMatrix"), false, this.projectionMatrix.data);
-		gl.uniform3f(gl.getUniformLocation(this.poi_shader_program, "v_cam_pos"), cam_pos.x, cam_pos.y, cam_pos.z);
+		gl.uniform3f(gl.getUniformLocation(this.poi_shader_program, "v_cam_pos"), cam_pos.x - this.v_world_center.x, cam_pos.y - this.v_world_center.y, cam_pos.z - this.v_world_center.z);
 
 		this.poiModel.render(0, this.poi_shader_program);
 
@@ -536,8 +542,8 @@ class DeviceTransform{
 	}
 
 	updatePosition(pos){
-		this.position.x = pos.coords.latitude;
-		this.position.z = pos.coords.longitude;
+		this.position.x = pos.coords.latitude * DEGREES_TO_METERS;
+		this.position.z = pos.coords.longitude * DEGREES_TO_METERS;
 	}
 
 	updateOrientation(q){
@@ -669,7 +675,7 @@ canvas.addEventListener('mouseup', function(e) {
 	rd = dev_transform.mat_transform.transpose().transform(rd);
 	rd.normalise();
 
-	var id = main_renderer.poiModel.rayPositionIntersect(dev_transform.position, rd);
+	var id = main_renderer.poiModel.rayPositionIntersect(dev_transform.position.sub(main_renderer.v_world_center), rd);
 
 	//alert("[" + rd.x + ", " + rd.y + ", " + rd.z + "] " + id);
 	if(id!=-1){
@@ -709,7 +715,7 @@ document.getElementById("btn_toggle").onclick = function(){
 
 function updateLoop(){
 	//update debug text
-	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x+", long="+dev_transform.position.z+"] <br>[q="+ dev_transform.quaternion + "] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
+	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x / DEGREES_TO_METERS+", long="+dev_transform.position.z / DEGREES_TO_METERS+"] <br>[q="+ dev_transform.quaternion + "] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
 	
 	//rendering
 	main_renderer.onPrepare();
