@@ -651,6 +651,7 @@ canvas.addEventListener('touchmove', function(e) {
 	var clientY = e.changedTouches[0].clientY;
 
 	dev_transform.position = dev_transform.position.add(dev_transform.getUp().scale(-(clientY - touchPositionCache.y) * 0.01));
+	dev_transform.position = dev_transform.position.add(dev_transform.getRight().scale((clientX - touchPositionCache.y) * 0.01));
 
 	//alert(dev_transform.position+" "+ clientY+" "+ touchPositionCache.y);
 
