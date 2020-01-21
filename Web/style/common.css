@@ -8,7 +8,7 @@ body{
 	display: flex;
 	flex-flow: column;
 	height: 100%;
-	overscroll-behavior: none;
+	overflow-y: hidden;
 }
 
 .horizontalLine{
