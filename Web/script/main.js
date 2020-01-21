@@ -333,7 +333,8 @@ class Renderer{
 
         this.projectionMatrix = this.createProjectionMatrix(75.0, 0.1, 1000.0);
 
-		this.v_world_center = new vec3(49.1918426 * DEGREES_TO_METERS, 0, 8.1241558 * DEGREES_TO_METERS);
+		//this.v_world_center = new vec3(49.1918426 * DEGREES_TO_METERS, 0, 8.1241558 * DEGREES_TO_METERS);
+		this.v_world_center = new vec3(0,0,0);
     }
 
     createProjectionMatrix(fov, near, far) {
