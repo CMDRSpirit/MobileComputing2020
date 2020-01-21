@@ -5,8 +5,6 @@ var gl;
 var currentOpenedSeatID = -1;
 //------------------------------------------------------------------------------
 
-document.documentElement.requestFullscreen();
-
 function toRadiant(deg){
 	return Math.PI * 2.0 * deg / 360.0;
 }
@@ -538,8 +536,8 @@ class DeviceTransform{
 	}
 
 	updatePosition(pos){
-		//this.position.x = pos.coords.latitude;
-		//this.position.z = pos.coords.longitude;
+		this.position.x = pos.coords.latitude;
+		this.position.z = pos.coords.longitude;
 	}
 
 	updateOrientation(q){
