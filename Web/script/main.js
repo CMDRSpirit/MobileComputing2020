@@ -726,9 +726,30 @@ document.getElementById("fast_travel").onclick = function(){
 		else{
 			el[i].style.display = "none";
 			canvas.style.height = "92%";
-		}
+		}	
 	}
 }
+
+var fte = document.getElementsByClassName("FastTravelItem");
+var fastTravelPoints = [new vec3(-21.8,1.5,-16.7), new vec3(0,1.5,0)];
+for(var i=0; i<fte.length; ++i){
+	const ID = i;
+	fte[i].onclick = function(){
+		for(var j=0; j<fte.length; ++j){
+			if(fte[j].style.display == "none"){
+				fte[j].style.display = "block";
+				canvas.style.height = "84%";
+			}
+			else{
+				fte[j].style.display = "none";
+				canvas.style.height = "92%";
+			}	
+		}
+		//travel
+		dev_transform.position = fastTravelPoints[ID];
+	}
+}
+
 //-----------------------------------------
 
 
