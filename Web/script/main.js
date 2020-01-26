@@ -295,6 +295,7 @@ class Renderer{
 	projectionMatrix;
 
 	v_world_center;
+	f_hollow_height;
 
 	constructor(){
 		canvas = document.querySelector("#gl_win");
@@ -335,6 +336,7 @@ class Renderer{
 
 		//this.v_world_center = new vec3(49.1918426 * DEGREES_TO_METERS, 0, 8.1241558 * DEGREES_TO_METERS);
 		this.v_world_center = new vec3(0,0,0);
+		this.f_hollow_height = 100.0;
     }
 
     createProjectionMatrix(fov, near, far) {
@@ -399,6 +401,7 @@ class Renderer{
 
 
 		gl.uniform1f(this.f_arLoc,  gl.canvas.height /  gl.canvas.width);
+		gl.uniform1f(gl.getUniformLocation(this.shader_program, "f_hollow_height"), this.f_hollow_height);
 
 		gl.enable(gl.DEPTH_TEST);
 
@@ -681,7 +684,7 @@ canvas.addEventListener('mouseup', function(e) {
 	//alert("[" + rd.x + ", " + rd.y + ", " + rd.z + "] " + id);
 	if(id!=-1){
 		document.getElementById("HeaderBar").style.height = "24%";
-		canvas.style.height = "64%";
+		canvas.style.height = "68%";
 
 		//
 		document.getElementById("seatID").innerHTML = "Seat Nr: "+id;
@@ -698,7 +701,7 @@ canvas.addEventListener('mouseup', function(e) {
 
 document.getElementById("btn_close").onclick = function(){
 	document.getElementById("HeaderBar").style.height = "0%";
-	canvas.style.height = "88%";
+	canvas.style.height = "92%";
 
 	currentOpenedSeatID = -1;
 }
@@ -709,15 +712,37 @@ document.getElementById("btn_toggle").onclick = function(){
 		document.getElementById("seatOccupied").innerHTML = "Occupied: "+ !main_renderer.poiModel.available[currentOpenedSeatID];
 	}
 }
-
+var target_hollow_height = main_renderer.f_hollow_height;
+document.getElementById("toggle_hollow").onclick = function(){
+	target_hollow_height = main_renderer.f_hollow_height > 2.0 ? 1.0 : 100.0;
+}
+document.getElementById("fast_travel").onclick = function(){
+	var el = document.getElementsByClassName("FastTravelItem");
+	for(var i=0; i<el.length; ++i){
+		if(el[i].style.display == "none"){
+			el[i].style.display = "block";
+			canvas.style.height = "84%";
+		}
+		else{
+			el[i].style.display = "none";
+			canvas.style.height = "92%";
+		}
+	}
+}
 //-----------------------------------------
 
 
 
 function updateLoop(){
 	//update debug text
-	element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x / DEGREES_TO_METERS+", long="+dev_transform.position.z / DEGREES_TO_METERS+"] <br>[q="+ dev_transform.quaternion + "] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
-	
+	//element_debug.innerHTML = "Debug: <br>[lat="+dev_transform.position.x / DEGREES_TO_METERS+", long="+dev_transform.position.z / DEGREES_TO_METERS+"] <br>[q="+ dev_transform.quaternion + "] <br>[F="+dev_transform.getForward().x+", "+dev_transform.getForward().y+", "+dev_transform.getForward().z+"] <br>[R="+dev_transform.getRight().x+", "+dev_transform.getRight().y+", "+dev_transform.getRight().z+"] <br>[U="+dev_transform.getUp().x+", "+dev_transform.getUp().y+", "+dev_transform.getUp().z+"]";
+	if(target_hollow_height > main_renderer.f_hollow_height + 0.1){
+		main_renderer.f_hollow_height /= 0.8;
+	}
+	else if(target_hollow_height < main_renderer.f_hollow_height - 0.1){
+		main_renderer.f_hollow_height *= 0.8;
+	}
+
 	//rendering
 	main_renderer.onPrepare();
 	main_renderer.onRender(dev_transform.mat_transform, dev_transform.position);

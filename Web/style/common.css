@@ -64,5 +64,22 @@ body{
 }
 
 #Debug {
-	height: "12%";
+	height: 12%;
+}
+#fast_travel {
+	height: 4%;
+	text-align: center;
+}
+#toggle_hollow {
+	height: 4%;
+	text-align: center;
+}
+
+.FastTravelItem {
+	display: none;
+	
+	height: 4%;
+	
+	text-align: center;
+	transition-duration: 0.5s;
 }
