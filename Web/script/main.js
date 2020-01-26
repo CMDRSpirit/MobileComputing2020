@@ -731,7 +731,7 @@ document.getElementById("fast_travel").onclick = function(){
 }
 
 var fte = document.getElementsByClassName("FastTravelItem");
-var fastTravelPoints = [new vec3(-21.8,1.5,-16.7), new vec3(0,1.5,0)];
+var fastTravelPoints = [new vec3(-21.8,1.5,16.7), new vec3(0,1.5,0)];
 for(var i=0; i<fte.length; ++i){
 	const ID = i;
 	fte[i].onclick = function(){
