@@ -69,17 +69,20 @@ body{
 #fast_travel {
 	height: 4%;
 	text-align: center;
+	padding: 0.5%;
 }
 #toggle_hollow {
 	height: 4%;
 	text-align: center;
+	padding: 0.5%;
 }
 
 .FastTravelItem {
 	display: none;
 	
 	height: 4%;
-	
+	padding: 0.5%;
+
 	text-align: center;
 	transition-duration: 0.5s;
 }

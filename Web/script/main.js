@@ -5,6 +5,11 @@ var gl;
 var currentOpenedSeatID = -1;
 //------------------------------------------------------------------------------
 var DEGREES_TO_METERS = 111000.0;
+
+var KEY_W = 87;
+var KEY_A = 65;
+var KEY_S = 83;
+var KEY_D = 68;
 //
 
 function toRadiant(deg){
@@ -24,6 +29,13 @@ function screenToUC(screenCoord){
 	var uv = screenCoord.sub(cvPos).div(cvSize);
 
 	return new vec3(uv.x * 2.0 - 1.0, -(uv.y * 2.0 - 1.0));
+}
+
+function multiplyQuaternions(q0, q1){
+	return  [q0[0] * q1[3] + q0[1] * q1[2] - q0[2] * q1[1] + q0[3] * q1[0],
+				 -q0[0] * q1[2] + q0[1] * q1[3] + q0[2] * q1[0] + q0[3] * q1[1],
+				 q0[0] * q1[1] - q0[1] * q1[0] + q0[2] * q1[3] + q0[3] * q1[2],
+				 -q0[0] * q1[0] - q0[1] * q1[1] - q0[2] * q1[2] + q0[3] * q1[3]];
 }
 
 /**
@@ -296,6 +308,7 @@ class Renderer{
 
 	v_world_center;
 	f_hollow_height;
+	f_hollow_prop;
 
 	constructor(){
 		canvas = document.querySelector("#gl_win");
@@ -337,6 +350,7 @@ class Renderer{
 		//this.v_world_center = new vec3(49.1918426 * DEGREES_TO_METERS, 0, 8.1241558 * DEGREES_TO_METERS);
 		this.v_world_center = new vec3(0,0,0);
 		this.f_hollow_height = 100.0;
+		this.f_hollow_prop = 0.0;
     }
 
     createProjectionMatrix(fov, near, far) {
@@ -402,6 +416,7 @@ class Renderer{
 
 		gl.uniform1f(this.f_arLoc,  gl.canvas.height /  gl.canvas.width);
 		gl.uniform1f(gl.getUniformLocation(this.shader_program, "f_hollow_height"), this.f_hollow_height);
+		gl.uniform1f(gl.getUniformLocation(this.shader_program, "f_hollow_prop"), this.f_hollow_prop);
 
 		gl.enable(gl.DEPTH_TEST);
 
@@ -669,6 +684,85 @@ canvas.addEventListener('touchmove', function(e) {
 
 }, false);
 
+//Mouse control
+var mouseDown = 0;
+var movementActive = 0;
+var v_rotation_euler = new vec3(0,0,0);
+canvas.addEventListener('mousedown', function(e) {
+	touchPositionCache = new vec3(e.clientX, e.clientY, 0);
+	mouseDown = 1;
+}, false);
+canvas.addEventListener('mouseup', function(e) {
+	mouseDown = 0;
+}, false);
+canvas.addEventListener('mousemove', function(e) {
+	if(mouseDown!=0){
+		var clientX = e.clientX;
+		var clientY = e.clientY;
+
+		var q = [0.0, 1.0 / Math.sqrt(2),  1.0 / Math.sqrt(2), 0.0];
+
+		//RX
+		var diff = clientY - touchPositionCache.y;
+		v_rotation_euler.x -= diff * 0.2;
+
+		var factor = sin(-v_rotation_euler.x * 0.5);
+		var y = factor;
+		var w = cos(-v_rotation_euler.x * 0.5);
+		var q0 = [y, 0, 0, w];
+		q = multiplyQuaternions(q0, q);
+
+		//RY
+		diff = clientX - touchPositionCache.x;
+		v_rotation_euler.y -= diff * 0.2;
+
+		factor = sin(v_rotation_euler.y * 0.5);
+		y = factor;
+		w = cos(v_rotation_euler.y * 0.5);
+		q0 = [0, 0, y, w];
+		q = multiplyQuaternions(q0, q);
+
+		dev_transform.updateOrientation(q);
+
+		touchPositionCache = new vec3(clientX, clientY, 0);
+	}
+}, false);
+document.addEventListener("keydown", e => {
+	if (e.isComposing || e.keyCode === 229) {
+	return;
+	}
+	if(e.keyCode == KEY_W){
+		movementActive |= 0x1;
+	}
+	else if(e.keyCode == KEY_S){
+		movementActive |= 0x2;
+	}
+	else if(e.keyCode == KEY_D){
+		movementActive |= 0x4;
+	}
+	else if(e.keyCode == KEY_A){
+		movementActive |= 0x8;
+	}
+});
+document.addEventListener("keyup", e => {
+	if (e.isComposing || e.keyCode === 229) {
+	return;
+	}
+	if(e.keyCode == KEY_W){
+		movementActive &= ~0x1;
+	}
+	else if(e.keyCode == KEY_S){
+		movementActive &= ~0x2;
+	}
+	else if(e.keyCode == KEY_D){
+		movementActive &= ~0x4;
+	}
+	else if(e.keyCode == KEY_A){
+		movementActive &= ~0x8;
+	}
+});
+//
+
 canvas.addEventListener('mouseup', function(e) {
 	var clientX = e.clientX;
 	var clientY = e.clientY;
@@ -684,7 +778,7 @@ canvas.addEventListener('mouseup', function(e) {
 	//alert("[" + rd.x + ", " + rd.y + ", " + rd.z + "] " + id);
 	if(id!=-1){
 		document.getElementById("HeaderBar").style.height = "24%";
-		canvas.style.height = "68%";
+		canvas.style.height = "64%";
 
 		//
 		document.getElementById("seatID").innerHTML = "Seat Nr: "+id;
@@ -701,7 +795,7 @@ canvas.addEventListener('mouseup', function(e) {
 
 document.getElementById("btn_close").onclick = function(){
 	document.getElementById("HeaderBar").style.height = "0%";
-	canvas.style.height = "92%";
+	canvas.style.height = "88%";
 
 	currentOpenedSeatID = -1;
 }
@@ -713,19 +807,21 @@ document.getElementById("btn_toggle").onclick = function(){
 	}
 }
 var target_hollow_height = main_renderer.f_hollow_height;
+var target_hollow_prop = main_renderer.f_hollow_prop;
 document.getElementById("toggle_hollow").onclick = function(){
 	target_hollow_height = main_renderer.f_hollow_height > 2.0 ? 1.0 : 100.0;
+	target_hollow_prop = main_renderer.f_hollow_prop > 0.1 ? 0.0 : 1.1;
 }
 document.getElementById("fast_travel").onclick = function(){
 	var el = document.getElementsByClassName("FastTravelItem");
 	for(var i=0; i<el.length; ++i){
 		if(el[i].style.display == "none"){
 			el[i].style.display = "block";
-			canvas.style.height = "84%";
+			canvas.style.height = "76%";
 		}
 		else{
 			el[i].style.display = "none";
-			canvas.style.height = "92%";
+			canvas.style.height = "88%";
 		}	
 	}
 }
@@ -738,11 +834,11 @@ for(var i=0; i<fte.length; ++i){
 		for(var j=0; j<fte.length; ++j){
 			if(fte[j].style.display == "none"){
 				fte[j].style.display = "block";
-				canvas.style.height = "84%";
+				canvas.style.height = "76%";
 			}
 			else{
 				fte[j].style.display = "none";
-				canvas.style.height = "92%";
+				canvas.style.height = "88%";
 			}	
 		}
 		//travel
@@ -763,6 +859,27 @@ function updateLoop(){
 	else if(target_hollow_height < main_renderer.f_hollow_height - 0.1){
 		main_renderer.f_hollow_height *= 0.8;
 	}
+	if(target_hollow_prop > main_renderer.f_hollow_prop + 0.02){
+		main_renderer.f_hollow_prop += 0.02;
+	}
+	else if(target_hollow_prop < main_renderer.f_hollow_prop){
+		main_renderer.f_hollow_prop -= 0.02;
+	}
+
+	//Keyboard movement
+	if((movementActive & 0x1) != 0){
+		dev_transform.position = dev_transform.position.add(dev_transform.getForward().scale(0.1));
+	}
+	else if((movementActive & 0x2) != 0){
+		dev_transform.position = dev_transform.position.add(dev_transform.getForward().scale(-0.1));
+	}
+	if((movementActive & 0x4) != 0){
+		dev_transform.position = dev_transform.position.add(dev_transform.getRight().scale(0.1));
+	}
+	else if((movementActive & 0x8) != 0){
+		dev_transform.position = dev_transform.position.add(dev_transform.getRight().scale(-0.1));
+	}
+	//
 
 	//rendering
 	main_renderer.onPrepare();
