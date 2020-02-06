@@ -552,7 +552,7 @@ class DeviceTransform{
 	mat_transform;
 
 	constructor(){
-		this.position = new vec3(0.0, 1.5, 0.0);
+		this.position = new vec3(0.0, 1.8, 0.0);
 		this.alpha = 0.0;
 		this.beta = 0.0;
 		this.gamma = 0.0;
