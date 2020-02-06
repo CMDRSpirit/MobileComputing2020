@@ -86,8 +86,8 @@
 
     void main(){
 		float p = noise(texCoords * 256.0);
-		if(height > 1.0 && p < f_hollow_prop)
-		//if(height > f_hollow_height)
+		//if(height > 1.0 && p < f_hollow_prop)
+		if(height > f_hollow_height)
 			discard;
 
 		vec4 color = texture(tex_diffuse, texCoords);

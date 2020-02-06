@@ -1,8 +1,8 @@
 body{
-	background-color: #000;
+	background-color: #111;
 			
 	font-family: sans;
-	color: #AFF;
+	color: FFF;
 }
 .flex_body{
 	display: flex;
@@ -13,7 +13,7 @@ body{
 
 .horizontalLine{
 	height: 2px;
-	background-color: #AFF;
+	background-color: #FFF;
 }
 
 .HeaderBar{
@@ -27,8 +27,8 @@ body{
 }
 
 .HeaderItem{
-	border-left: 2px solid #AFF0;
-	border-right: 2px solid #AFF0;
+	border-left: 2px solid #FFF0;
+	border-right: 2px solid #FFF0;
 		
 	font-size: 32px;
 	height: auto;
@@ -46,13 +46,17 @@ body{
 	transition-duration: 0.4s;
 }
 .HeaderButton:hover{
-	border-left: 2px solid #AFF;
-	border-right: 2px solid #AFF;
+	border-left: 2px solid #FFF;
+	border-right: 2px solid #FFF;
+
+	background-color: #333;
 }
 .HeaderButton:active{
-	border-left: 2px solid #AFF0;
-	border-right: 2px solid #AFF0;
+	border-left: 2px solid #FFF0;
+	border-right: 2px solid #FFF0;
 	
+	background-color: #555;
+
 	transition-duration: 0.1s;
 }
 

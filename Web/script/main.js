@@ -688,8 +688,10 @@ canvas.addEventListener('touchmove', function(e) {
 var mouseDown = 0;
 var movementActive = 0;
 var v_rotation_euler = new vec3(0,0,0);
+var mouseDownPos = new vec3(0,0,0);
 canvas.addEventListener('mousedown', function(e) {
 	touchPositionCache = new vec3(e.clientX, e.clientY, 0);
+	mouseDownPos = new vec3(e.clientX, e.clientY, 0);
 	mouseDown = 1;
 }, false);
 canvas.addEventListener('mouseup', function(e) {
@@ -767,6 +769,8 @@ canvas.addEventListener('mouseup', function(e) {
 	var clientX = e.clientX;
 	var clientY = e.clientY;
 
+	var len = math.abs(clientX - mouseDownPos.x) + math.abs(clientY - mouseDownPos.y);
+
 	var uc = screenToUC(new vec3(clientX, clientY, 0.0));
 		
 	var rd = main_renderer.projectionMatrix.invert().transpose().transform(new vec3(uc.x, uc.y, -1.0));
@@ -776,7 +780,7 @@ canvas.addEventListener('mouseup', function(e) {
 	var id = main_renderer.poiModel.rayPositionIntersect(dev_transform.position.sub(main_renderer.v_world_center), rd);
 
 	//alert("[" + rd.x + ", " + rd.y + ", " + rd.z + "] " + id);
-	if(id!=-1){
+	if(id!=-1 && len < 8){
 		document.getElementById("HeaderBar").style.height = "24%";
 		canvas.style.height = "64%";
 
@@ -815,7 +819,7 @@ document.getElementById("toggle_hollow").onclick = function(){
 document.getElementById("fast_travel").onclick = function(){
 	var el = document.getElementsByClassName("FastTravelItem");
 	for(var i=0; i<el.length; ++i){
-		if(el[i].style.display == "none"){
+		if(el[i].style.display == "none" || el[i].style.display == ""){
 			el[i].style.display = "block";
 			canvas.style.height = "76%";
 		}
@@ -827,7 +831,7 @@ document.getElementById("fast_travel").onclick = function(){
 }
 
 var fte = document.getElementsByClassName("FastTravelItem");
-var fastTravelPoints = [new vec3(-21.8,1.5,16.7), new vec3(0,1.5,0)];
+var fastTravelPoints = [new vec3(-21.8,1.8,16.7), new vec3(0,1.8,0)];
 for(var i=0; i<fte.length; ++i){
 	const ID = i;
 	fte[i].onclick = function(){
