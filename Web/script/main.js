@@ -56,14 +56,14 @@ function raySphereIntersect(ro, rd, ce, ra){
 }
 
 class TriangleStripModel {
-
+/*
 	vertices;
 	bufferID;
 
 	tex_id;
 
 	positions;
-	available;
+	available;*/
 
 	constructor(){
 		this.vertices = [-1, -1, 1, -1, -1, 1, 1, 1];
