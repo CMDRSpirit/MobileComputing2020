@@ -57,7 +57,7 @@ function raySphereIntersect(ro, rd, ce, ra){
 
 class TriangleStripModel {
 
-	vertices = [-1, -1, 1, -1, -1, 1, 1, 1];
+	vertices;
 	bufferID;
 
 	tex_id;
@@ -66,6 +66,7 @@ class TriangleStripModel {
 	available;
 
 	constructor(){
+		this.vertices = [-1, -1, 1, -1, -1, 1, 1, 1];
 		this.bufferID = gl.createBuffer();
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferID);
@@ -161,9 +162,9 @@ class TriangleStripModel {
 }
 class TriangleIndexedModel {
 	
-	vertices = [-1, 1, 0, -1, -1, 0, 1, -1, 0, 1, 1, 0];
+	vertices;
 	uvs = [];
-	indices = [0, 1, 2, 2, 3, 0];
+	indices;
 	
 	vertexBufferID;
 	uvBufferID;
@@ -172,6 +173,9 @@ class TriangleIndexedModel {
 	tex_id;
 
 	constructor(){
+		this.vertices = [-1, 1, 0, -1, -1, 0, 1, -1, 0, 1, 1, 0];
+		this.indices = [0, 1, 2, 2, 3, 0];
+		
 		this.vertexBufferID = gl.createBuffer();
 		this.uvBufferID = gl.createBuffer();
 		this.indexBufferID = gl.createBuffer();
