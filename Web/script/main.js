@@ -161,7 +161,7 @@ class TriangleStripModel {
 
 }
 class TriangleIndexedModel {
-	
+	/*
 	vertices;
 	uvs = [];
 	indices;
@@ -171,7 +171,7 @@ class TriangleIndexedModel {
 	indexBufferID;
 
 	tex_id;
-
+*/
 	constructor(){
 		this.vertices = [-1, 1, 0, -1, -1, 0, 1, -1, 0, 1, 1, 0];
 		this.indices = [0, 1, 2, 2, 3, 0];
@@ -292,7 +292,7 @@ class TriangleIndexedModel {
 }
 
 class Renderer{
-
+/*
 	mat_proj;
 	mat_view;
 
@@ -312,7 +312,7 @@ class Renderer{
 
 	v_world_center;
 	f_hollow_height;
-	f_hollow_prop;
+	f_hollow_prop;*/
 
 	constructor(){
 		canvas = document.querySelector("#gl_win");
@@ -500,7 +500,7 @@ class vec3{
 }
 
 class mat4{
-	data;
+	//data;
 
 	constructor(m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33){
 		this.data = [m00, m10, m20, m30, m01, m11, m21, m31, m02, m12, m22, m32, m03, m13, m23, m33];
@@ -549,12 +549,12 @@ class mat4{
 }
 
 class DeviceTransform{
-	
+	/*
 	position;
 	
 	quaternion;
 	mat_transform;
-
+*/
 	constructor(){
 		this.position = new vec3(0.0, 1.8, 0.0);
 		this.alpha = 0.0;
