@@ -8,6 +8,8 @@ body{
 			
 	font-family: sans;
 	color: FFF;
+
+	overscroll-behavior-y: contain;
 }
 .flex_body{
 	display: flex;
