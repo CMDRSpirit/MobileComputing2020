@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_base"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".SettingsActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="-16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/number_rot_threshold"
+                android:layout_width="200dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/stroke"
+                android:ems="10"
+                android:includeFontPadding="true"
+                android:inputType="number"
+                android:paddingHorizontal="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switch_pause_data_collection" />
+
+            <Switch
+                android:id="@+id/switch_generate_values"
+                android:layout_width="356dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/stroke"
+                android:paddingHorizontal="8dp"
+                android:text="Generate Sensor Values"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_devices" />
+
+            <Switch
+                android:id="@+id/switch_pause_data_collection"
+                android:layout_width="356dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/stroke"
+                android:includeFontPadding="true"
+                android:paddingHorizontal="8dp"
+                android:text="Pause data collection"
+                android:textScaleX="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switch_show_graph" />
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="354dp"
+                android:layout_height="220dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/stroke"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_calibrate">
+                <TextView
+                    android:id="@+id/tv_log"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="true"
+                    android:paddingHorizontal="8dp"
+                    android:text="LOG:\n" />
+            </androidx.core.widget.NestedScrollView>
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/view_devices"
+                android:layout_width="351dp"
+                android:layout_height="240dp"
+                android:background="@drawable/stroke"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_show_device_list">
+
+                <LinearLayout
+                    android:id="@+id/layout_scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </androidx.core.widget.NestedScrollView>
+
+            <TextView
+                android:id="@+id/tv_rot_threshold"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/stroke"
+                android:includeFontPadding="true"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="13dp"
+                android:text="Rotation threshold:"
+                app:layout_constraintEnd_toStartOf="@+id/number_rot_threshold"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/number_rot_threshold" />
+
+            <Button
+                android:id="@+id/btn_calibrate"
+                android:layout_width="134dp"
+                android:layout_height="49dp"
+                android:layout_marginTop="16dp"
+                android:text="Calibrate"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/number_rot_threshold" />
+
+            <Switch
+                android:id="@+id/switch_show_graph"
+                android:layout_width="356dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/stroke"
+                android:includeFontPadding="true"
+                android:paddingHorizontal="8dp"
+                android:text="Show Full Graph"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switch_generate_values" />
+
+            <TextView
+                android:id="@+id/tv_show_device_list"
+                android:layout_width="351dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/stroke"
+                android:gravity="center"
+                android:text="Device List"
+                android:textColor="#FFFFFF"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
